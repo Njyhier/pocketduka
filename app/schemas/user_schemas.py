@@ -1,30 +1,34 @@
-from Baseschema import BaseShema
+from .Baseschema import BaseSchema
 from typing import Optional
 from pydantic import Field, EmailStr
 import uuid
 
 
-class UserWrite(BaseShema):
+class UserWrite(BaseSchema):
     first_name: str = Field(...)
     last_name: str = Field(...)
     email: EmailStr = Field(...)
-    password: str = Field(...)
+    username: str
 
 
-class UserReadPrivate(BaseShema):
+class UserReadPrivate(BaseSchema):
     id: uuid.UUID
     email: EmailStr
     first_name: str
     last_name: str
 
 
-class UserReadPublic(BaseShema):
+class UserReadPublic(BaseSchema):
     first_name: str
     last_name: str
 
 
-class UserUpdate(BaseShema):
+class UserUpdate(BaseSchema):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     email: Optional[EmailStr] = None
     password: Optional[str] = None
+
+
+class DeleteResponse(BaseSchema):
+    message: str

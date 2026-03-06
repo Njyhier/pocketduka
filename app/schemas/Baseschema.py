@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 
-class BaseShema(BaseModel):
+class BaseSchema(BaseModel):
     class Config:
         from_orm = True

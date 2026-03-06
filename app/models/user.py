@@ -1,5 +1,5 @@
-from sqlalchemy import Column, String, Integer, UUID
-from Base import BaseModel
+from sqlalchemy import Column, String, Integer, UUID as SQLUUID
+from .Base import BaseModel
 from typing import Annotated
 import uuid
 
@@ -7,9 +7,13 @@ import uuid
 class User(BaseModel):
     __tablename__ = "users"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(
+        String(60),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4()),
+    )
     first_name = Column(String)
     last_name = Column(String)
-
+    email = Column(String, nullable=False, unique=True)
     username = Column(String(12), nullable=False)
     password_hash = Column(String(60))
