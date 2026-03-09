@@ -5,7 +5,7 @@ from app.schemas.user_schemas import (
     UserUpdate,
     DeleteResponse,
 )
-from app.services.user.user_service import (
+from app.services.user_service import (
     read_users,
     create_user,
     read_user,

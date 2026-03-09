@@ -1,6 +1,6 @@
-from sqlalchemy import Column, String, Integer, UUID as SQLUUID
+from sqlalchemy import Column, String, DateTime
 from .Base import BaseModel
-from typing import Annotated
+from datetime import datetime, timezone
 import uuid
 
 
@@ -16,4 +16,5 @@ class User(BaseModel):
     last_name = Column(String)
     email = Column(String, nullable=False, unique=True)
     username = Column(String(12), nullable=False)
+    updated_at = Column(DateTime, onupdate=lambda: datetime.now(timezone.utc))
     password_hash = Column(String(60))
