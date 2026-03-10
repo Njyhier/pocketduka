@@ -1,12 +1,9 @@
 from .Base import BaseModel
-from sqlalchemy import Column, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
-import uuid
+from sqlalchemy import Column, ForeignKey, String, Integer
 
 
 class RolePermissions(BaseModel):
     __tablename__ = "role_permissions"
-
-    role_id = Column("role_id", UUID(as_uuid=True), ForeignKey("roles.id"),primary_key=True)
-    permission_id = Column(
-        "permission_id", UUID(as_uuid=True), ForeignKey("permissions.id"),primary_key=True)
+    id= Column(Integer)
+    role_id = Column('role_id',String(60), ForeignKey("roles.id"), primary_key=True)
+    permission_id = Column('permission_id',String(60), ForeignKey("permissions.id"), primary_key=True)

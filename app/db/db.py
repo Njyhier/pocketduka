@@ -2,6 +2,9 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 from dotenv import load_dotenv
 import os
 from app.models.Base import BaseModel
+from app.models.roles import Role
+from app.models.permissions import Permission
+from app.models.associations import RolePermissions
 
 load_dotenv()
 DB_URL = os.getenv("DB_URL")

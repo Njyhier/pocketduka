@@ -30,5 +30,4 @@ class UserUpdate(BaseSchema):
     password: Optional[str] = None
 
 
-class DeleteResponse(BaseSchema):
-    message: str
+

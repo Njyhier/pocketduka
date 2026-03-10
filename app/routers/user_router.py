@@ -3,8 +3,8 @@ from app.schemas.user_schemas import (
     UserWrite,
     UserReadPublic,
     UserUpdate,
-    DeleteResponse,
 )
+from app.schemas.Baseschema import DeleteResponce
 from app.services.user_service import (
     read_users,
     create_user,
@@ -53,7 +53,7 @@ async def update_user_route(
     return await update_user(user_data, user_id, session)
 
 
-@router.delete("/users/{user_id}", response_model=DeleteResponse)
+@router.delete("/users/{user_id}", response_model=DeleteResponce)
 async def delete_user_route(
     user_id: str, session: AsyncSession = Depends(get_async_session)
 ):

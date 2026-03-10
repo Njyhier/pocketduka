@@ -1,13 +1,11 @@
 from app.schemas.user_schemas import (
     UserWrite,
     UserUpdate,
-    DeleteResponse,
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from app.models.user import User
-from sqlalchemy import select, String
-from uuid import UUID
+from sqlalchemy import select
 
 
 async def create_user(session: AsyncSession, user_create: UserWrite) -> User:
@@ -85,7 +83,7 @@ async def update_user(
 async def delete_user(
     user_id: str,
     session: AsyncSession,
-) -> DeleteResponse:
+):
     result = await session.execute(select(User).where(User.id == user_id))
     user_to_delete = result.scalar_one_or_none()
     if user_to_delete is None:
