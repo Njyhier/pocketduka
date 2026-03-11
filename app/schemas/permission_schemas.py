@@ -1,4 +1,4 @@
-from Baseschema import BaseSchema
+from .Baseschema import BaseSchema
 from typing import Optional
 
 
