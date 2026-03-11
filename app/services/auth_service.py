@@ -7,7 +7,7 @@ from app.utils.password import verify_password, password_hash
 from typing import Annotated
 from app.utils.access_token import create_access_token
 from app.models.user import User
-from datetime import datetime, timedelta
+from datetime import timedelta
 from app.db.session import get_async_session
 from app.schemas.token_schemas import TokenData, Token
 from fastapi import Depends, HTTPException, status
@@ -43,16 +43,16 @@ async def get_current_user(token: Annotated, session: AsyncSession):
     except InvalidTokenError:
         raise credentials_exception
     user = await get_user_by_username(username=token_data.username, session=session)
-    user.is_active = True
     if user is None:
         raise credentials_exception
     return user
 
 
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: Annotated[AsyncSession, Depends(get_async_session)]
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    session: Annotated[AsyncSession, Depends(get_async_session)],
 ) -> Token:
-    user = authenticate_user(form_data.username, form_data.password, session)
+    user = await authenticate_user(form_data.username, form_data.password, session)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -64,3 +64,17 @@ async def login_for_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type="bearer")
+
+
+async def require_roles(*roles: str):
+    async def check_roles(
+        current_user: Annotated[User, Depends(get_current_user)],
+    ) -> bool:
+        if not any(role in current_user.roles for role in roles):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not authorized to perform this action",
+            )
+        return True
+
+    return await check_roles
