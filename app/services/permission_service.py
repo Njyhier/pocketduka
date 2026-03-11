@@ -1,4 +1,5 @@
-from app.schemas.permission_schemas import PermissionCreate, PermissionUpdate, DeleteResponce
+from app.schemas.permission_schemas import PermissionCreate, PermissionUpdate
+from app.schemas.Baseschema import DeleteResponce
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.permissions import Permission
 from sqlalchemy import select
@@ -46,7 +47,7 @@ async def update_permission(
     permission_id: str, update_data: PermissionUpdate, session: AsyncSession
 ) -> Permission:
     permission_to_update = await get_permission_by_id(permission_id, session)
-    update_data = Permission(**update_data.model_dump(exclude_unset=True))
+    update_data = update_data.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(permission_to_update, key, value)
     await session.commit()
