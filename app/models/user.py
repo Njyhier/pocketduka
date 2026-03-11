@@ -15,6 +15,6 @@ class User(BaseModel):
     first_name = Column(String)
     last_name = Column(String)
     email = Column(String, nullable=False, unique=True)
-    username = Column(String(12), nullable=False)
+    username = Column(String(12), nullable=False, unique=True)
     updated_at = Column(DateTime, onupdate=lambda: datetime.now(timezone.utc))
     password_hash = Column(String(60))
