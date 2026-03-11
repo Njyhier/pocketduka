@@ -9,6 +9,7 @@ class UserWrite(BaseSchema):
     last_name: str = Field(...)
     email: EmailStr = Field(...)
     username: str
+    password: str
 
 
 class UserReadPrivate(BaseSchema):
@@ -28,6 +29,3 @@ class UserUpdate(BaseSchema):
     last_name: Optional[str] = None
     email: Optional[EmailStr] = None
     password: Optional[str] = None
-
-
-

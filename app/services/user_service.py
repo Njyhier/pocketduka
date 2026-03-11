@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from app.models.user import User
 from sqlalchemy import select
+from app.utils.password import get_password_hash
 
 
 async def create_user(session: AsyncSession, user_create: UserWrite) -> User:
@@ -16,14 +17,12 @@ async def create_user(session: AsyncSession, user_create: UserWrite) -> User:
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already exists",
         )
-
-    hashed_pwd = "password"
     db_user = User(
         first_name=user_create.first_name,
         last_name=user_create.last_name,
         email=user_create.email,
         username=user_create.username,
-        password_hash=hashed_pwd,
+        password_hash=await get_password_hash(user_create.password),
     )
     session.add(db_user)
     await session.commit()

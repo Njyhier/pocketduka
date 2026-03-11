@@ -24,6 +24,13 @@ from app.services.auth_service import login_for_access_token
 router = APIRouter()
 
 
+@router.post("/sign_in")
+async def sign_in(
+    user_data: UserWrite, session: Annotated[AsyncSession, Depends(get_async_session)]
+):
+    return await create_user(session, user_data)
+
+
 @router.post("/login", response_model=Token)
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
