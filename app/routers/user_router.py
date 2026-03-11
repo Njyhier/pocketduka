@@ -9,23 +9,35 @@ from app.services.user_service import (
     read_users,
     create_user,
     read_user,
-    read_user_me,
     update_user,
     delete_user,
 )
 from app.db.session import get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends
-from uuid import UUID
+from app.schemas.token_schemas import Token
+from typing import Annotated
+from fastapi.security import OAuth2PasswordRequestForm
+
+from app.services.auth_service import login_for_access_token
 
 router = APIRouter()
 
 
-@router.post("/users")
+@router.post("/login", response_model=Token)
+async def login(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+):
+
+    return await login_for_access_token(form_data, session)
+
+
+@router.post("/users", response_model=UserReadPublic)
 async def create_user_route(
     user_data: UserWrite,
     session: AsyncSession = Depends(get_async_session),
-) -> UserReadPublic:
+):
     return await create_user(session, user_data)
 
 
@@ -36,7 +48,7 @@ async def read_users_route(
     return await read_users(session)
 
 
-@router.get("/users/{user_id}", response_model=UserReadPrivate)
+@router.get("/users/{user_id}", response_model=UserReadPublic)
 async def read_user_route(
     user_id: str,
     session: AsyncSession = Depends(get_async_session),
