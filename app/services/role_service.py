@@ -1,16 +1,18 @@
 from app.schemas.role_schemas import RoleCreate, RoleUpdate
 from app.schemas.Baseschema import DeleteResponce
+from app.models import user
+from app.services.auth_service import get_current_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.models.roles import Role
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
 from app.services.permission_service import read_permissions_by_ids
 import asyncio
 
 
-async def get_role_by_id(role_id: str, session: AsyncSession) -> Role:
-    result = await session.execute(select(Role).where(Role.id == role_id))
+async def get_role_by_name(role_name: str, session: AsyncSession) -> Role:
+    result = await session.execute(select(Role).where(Role.name == role_name))
     role = result.scalar_one_or_none()
     if role is None:
         raise HTTPException(
@@ -40,15 +42,15 @@ async def read_roles(session: AsyncSession) -> list[Role]:
     return roles
 
 
-async def read_role(role_id: str, session: AsyncSession) -> Role:
-    role = await get_role_by_id(role_id, session)
+async def read_role(role_name: str, session: AsyncSession) -> Role:
+    role = await get_role_by_name(role_name, session)
     return role
 
 
 async def update_role(
-    role_id: str, update_data: RoleUpdate, session: AsyncSession
+    role_name: str, update_data: RoleUpdate, session: AsyncSession
 ) -> Role:
-    role_to_update = await get_role_by_id(role_id, session)
+    role_to_update = await get_role_by_name(role_name, session)
     update_data = update_data.model_dump(exclude_unset=True)
     if "permissions" in update_data:
         permissions = await read_permissions_by_ids(*update_data.pop("permissions"))
@@ -64,14 +66,14 @@ async def update_role(
     return role_to_update
 
 
-async def delete_role(role_id: str, session: AsyncSession) -> DeleteResponce:
-    role_to_delete = await get_role_by_id(role_id, session)
+async def delete_role(role_name: str, session: AsyncSession) -> DeleteResponce:
+    role_to_delete = await get_role_by_name(role_name, session)
     await session.delete(role_to_delete)
     await session.commit()
     return {"message": "Role dleted successfuly"}
 
 
-async def read_roles_by_ids(*role_ids: str, session: AsyncSession) -> list[Role]:
-    caroutines = [get_role_by_id(role_id, session) for role_id in role_ids]
+async def read_roles_by_names(*role_names: str, session: AsyncSession) -> list[Role]:
+    caroutines = [get_role_by_name(role_name, session) for role_name in role_names]
     result = await asyncio.gather(*caroutines)
     return result
