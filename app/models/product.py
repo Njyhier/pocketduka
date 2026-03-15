@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, DateTime, Text, Numeric
 from .Base import BaseModel
 from datetime import datetime, timezone
+from sqlalchemy.orm import relationship
 
 import uuid
 
@@ -8,10 +9,25 @@ import uuid
 class Product(BaseModel):
     __tablename__ = "products"
 
-    id = Column(String(60), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = Column(
+        String(60),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4()),
+    )
     name = Column(String)
     price = Column(Numeric(10, 2))
     description = Column(Text)
     category = Column(String)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc), nullable=False)
-    updated_at = Column(DateTime, onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+    updated_at = Column(
+        DateTime,
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+    images = relationship(
+        "ProductImage",
+        back_populates="product",
+    )
