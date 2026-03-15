@@ -1,6 +1,11 @@
 from fastapi import APIRouter, Depends
 from app.schemas.Baseschema import DeleteResponce
-from app.schemas.permission_schemas import PermissionCreate, PermissionRead,PermissionUpdate
+from typing import List
+from app.schemas.permission_schemas import (
+    PermissionCreate,
+    PermissionRead,
+    PermissionUpdate,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_async_session
 from app.services.permission_service import (
@@ -9,9 +14,11 @@ from app.services.permission_service import (
     read_permission,
     delete_permission,
     update_permission,
+    read_permissions_by_ids,
 )
 
 router = APIRouter()
+
 
 @router.post("/permissions", response_model=PermissionRead)
 async def create_permission_route(
@@ -26,6 +33,12 @@ async def read_permissions_route(
     session: AsyncSession = Depends(get_async_session),
 ):
     return await read_permissions(session)
+
+
+@router.get("/permissions/ids")
+async def read_perms(session: AsyncSession = Depends(get_async_session)):
+    return await read_permissions_by_ids(session)
+
 
 @router.get("/permissions/{permission_id}", response_model=PermissionRead)
 async def read_permission_route(
@@ -46,6 +59,7 @@ async def update_permission_route(
 
 @router.delete("/permissions/{permission_id}", response_model=DeleteResponce)
 async def delete_permission_route(
-    permission_id: str, session: AsyncSession = Depends(get_async_session)
+    permission_id: str,
+    session: AsyncSession = Depends(get_async_session),
 ):
     return await delete_permission(permission_id, session)
