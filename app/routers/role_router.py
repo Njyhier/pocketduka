@@ -30,12 +30,12 @@ async def read_roles_route(
     return await read_roles(session)
 
 
-@router.get("/roles/{role_id}", response_model=BaseRole)
+@router.get("/roles/name", response_model=RoleRead)
 async def read_role_route(
-    role_id: str,
+    role_name: str,
     session: AsyncSession = Depends(get_async_session),
 ):
-    return await read_role(role_id, session)
+    return await read_role(role_name, session)
 
 
 @router.put("/roles/{role_id}", response_model=BaseRole)
