@@ -2,8 +2,8 @@ from app.schemas.permission_schemas import PermissionCreate, PermissionUpdate
 from app.schemas.Baseschema import DeleteResponce
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.permissions import Permission
-from sqlalchemy import select
 from fastapi import HTTPException, status
+from sqlalchemy import select
 
 
 async def get_permission_by_id(permission_id: str, session: AsyncSession) -> Permission:
@@ -62,3 +62,11 @@ async def delete_permission(
     await session.delete(permission_to_delete)
     await session.commit()
     return {"message": "Permission dleted successfuly"}
+
+
+async def read_permissions_by_ids(
+    ids: list[str],
+    session: AsyncSession,
+) -> list[Permission]:
+    result = await session.execute(select(Permission).where(Permission.id.in_(ids)))
+    return list(result.scalars().all())
