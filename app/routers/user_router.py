@@ -60,7 +60,7 @@ async def create_user_route(
 @router.get("/users", response_model=list[UserReadPrivate])
 async def read_users_route(
     session: AsyncSession = Depends(get_async_session),
-    _:bool = Depends(require_roles_dep('admin'))
+    _: bool = Depends(require_roles_dep("admin")),
 ) -> list[UserReadPrivate]:
     return await read_users(session)
 
@@ -107,14 +107,14 @@ async def delete_user_route(
     return await delete_user(user_id, session)
 
 
-@router.patch("/users/{user_id}/roles")
+@router.patch("/users/{user_id}/roles", response_model=UserReadPrivate)
 async def update_user_roles_route(
     user_id: str,
     role_update: UserRoleUpdate,
     session: AsyncSession = Depends(get_async_session),
 ):
 
-    return await update_user_roles(user_id, role_update.role_ids, session)
+    return await update_user_roles(user_id, role_update, session)
 
 
 @router.patch("/users/me", response_model=UserReadPrivate)
