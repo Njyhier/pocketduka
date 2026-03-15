@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from app.schemas.Baseschema import DeleteResponce
-from app.schemas.role_schemas import BaseRole, RoleCreate
+from app.schemas.role_schemas import BaseRole, RoleCreate, RoleRead
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_async_session
 from app.services.role_service import (
@@ -10,11 +10,12 @@ from app.services.role_service import (
     delete_role,
     update_role,
 )
+from app.services.auth_service import require_roles_dep
 
 router = APIRouter()
 
 
-@router.post("/roles", response_model=BaseRole)
+@router.post("/roles", response_model=RoleRead)
 async def create_role_route(
     role_data: RoleCreate,
     session: AsyncSession = Depends(get_async_session),
@@ -22,7 +23,7 @@ async def create_role_route(
     return await create_role(role_data, session)
 
 
-@router.get("/roles", response_model=list[BaseRole])
+@router.get("/roles", response_model=list[RoleRead])
 async def read_roles_route(
     session: AsyncSession = Depends(get_async_session),
 ):
@@ -48,6 +49,7 @@ async def update_role_route(
 
 @router.delete("/roles/{role_id}", response_model=DeleteResponce)
 async def delete_role_route(
-    role_id: str, session: AsyncSession = Depends(get_async_session)
+    role_id: str,
+    session: AsyncSession = Depends(get_async_session),
 ):
     return await delete_role(role_id, session)

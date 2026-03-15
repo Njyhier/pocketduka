@@ -15,19 +15,23 @@ router = APIRouter()
 
 @router.post("/products", response_model=ProductRead)
 async def create_product_route(
-    product_create: ProductCreate, session: AsyncSession = Depends(get_async_session)
+    product_create: ProductCreate,
+    session: AsyncSession = Depends(get_async_session),
 ):
     return await create_product(product_create, session)
 
 
 @router.get("/products")
-async def read_products_route(session: AsyncSession = Depends(get_async_session)):
+async def read_products_route(
+    session: AsyncSession = Depends(get_async_session),
+):
     return await read_products(session)
 
 
 @router.get("/products/{product_id}", response_model=ProductRead)
 async def read_product_route(
-    product_id: str, session: AsyncSession = Depends(get_async_session)
+    product_id: str,
+    session: AsyncSession = Depends(get_async_session),
 ):
     return await read_product(product_id, session)
 
