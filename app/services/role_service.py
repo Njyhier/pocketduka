@@ -1,9 +1,12 @@
-from app.schemas.role_schemas import RoleCreate
+from app.schemas.role_schemas import RoleCreate, RoleUpdate
 from app.schemas.Baseschema import DeleteResponce
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.models.roles import Role
 from fastapi import HTTPException, status
+from app.services.permission_service import read_permissions_by_ids
+import asyncio
 
 
 async def get_role_by_id(role_id: str, session: AsyncSession) -> Role:
@@ -17,7 +20,10 @@ async def get_role_by_id(role_id: str, session: AsyncSession) -> Role:
 
 
 async def create_role(role_data: RoleCreate, session: AsyncSession) -> Role:
-    role = Role(**role_data.model_dump())
+    role_dict = role_data.model_dump()
+    permissions = await read_permissions_by_ids(role_data.permissions, session=session)
+    role_dict["permissions"] = permissions
+    role = Role(**role_dict)
     session.add(role)
     await session.commit()
     await session.refresh(role)
@@ -25,7 +31,7 @@ async def create_role(role_data: RoleCreate, session: AsyncSession) -> Role:
 
 
 async def read_roles(session: AsyncSession) -> list[Role]:
-    result = await session.execute(select(Role))
+    result = await session.execute(select(Role).options(selectinload(Role.permissions)))
     roles = result.scalars().all()
     if not roles:
         raise HTTPException(
@@ -39,11 +45,20 @@ async def read_role(role_id: str, session: AsyncSession) -> Role:
     return role
 
 
-async def update_role(role_id: str, update_data: RoleCreate, session: AsyncSession) -> Role:
+async def update_role(
+    role_id: str, update_data: RoleUpdate, session: AsyncSession
+) -> Role:
     role_to_update = await get_role_by_id(role_id, session)
     update_data = update_data.model_dump(exclude_unset=True)
+    if "permissions" in update_data:
+        permissions = await read_permissions_by_ids(*update_data.pop("permissions"))
+        for perm in permissions:
+            if perm not in role_to_update.permissions and perm is not None:
+                role_to_update.permissions.append(perm)
+
     for key, value in update_data.items():
         setattr(role_to_update, key, value)
+
     await session.commit()
     await session.refresh(role_to_update)
     return role_to_update
@@ -54,3 +69,9 @@ async def delete_role(role_id: str, session: AsyncSession) -> DeleteResponce:
     await session.delete(role_to_delete)
     await session.commit()
     return {"message": "Role dleted successfuly"}
+
+
+async def read_roles_by_ids(*role_ids: str, session: AsyncSession) -> list[Role]:
+    caroutines = [get_role_by_id(role_id, session) for role_id in role_ids]
+    result = await asyncio.gather(*caroutines)
+    return result
