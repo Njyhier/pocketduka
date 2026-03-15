@@ -1,11 +1,15 @@
 import jwt
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.utils.access_token import secret_key, algorithm, token_validity_minutes
+from app.utils.access_token import (
+    secret_key,
+    algorithm,
+    token_validity_minutes,
+    create_access_token,
+)
 from app.utils.user_utils import get_user_by_username
 from app.utils.password import verify_password, password_hash
 from typing import Annotated
-from app.utils.access_token import create_access_token
 from app.models.user import User
 from datetime import timedelta
 from app.db.session import get_async_session
@@ -77,13 +81,17 @@ async def get_current_user_dep(
     return await get_current_user(token, session)
 
 
+async def get_user_roles(user: User = Depends(get_current_user)):
+    user_roles = {role.name for role in user.roles}
+    return user_roles
+
+
 def require_roles_dep(*roles: str):
-    async def check_roles(user: User = Depends(get_current_user)):
-        user_roles = {role.id for role in user.roles}
-        if not any(id in user_roles for id in roles):
+    async def check_roles(user_roles: set[str] = Depends(get_user_roles)):
+        if not any(name in user_roles for name in roles):
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized"
+                status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized"
             )
-        return user
+        return True
 
     return check_roles
