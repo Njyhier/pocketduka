@@ -10,6 +10,15 @@ class UserWrite(BaseSchema):
     email: EmailStr = Field(...)
     username: str
     password: str
+    role_ids: Optional[list[str]]
+
+
+class UserSignUp(BaseSchema):
+    first_name: str = Field(...)
+    last_name: str = Field(...)
+    email: EmailStr = Field(...)
+    username: str
+    password: str
 
 
 class UserReadPrivate(BaseSchema):
@@ -17,6 +26,7 @@ class UserReadPrivate(BaseSchema):
     email: EmailStr
     first_name: str
     last_name: str
+    username: str
 
 
 class UserReadPublic(BaseSchema):
