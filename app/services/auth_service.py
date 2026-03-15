@@ -21,19 +21,23 @@ dummy_hash = password_hash.hash(dummy_password)
 async def authenticate_user(username: str, plain_password: str, session: AsyncSession):
     user = await get_user_by_username(username, session)
     if user is None:
-        verify_password(dummy_password, dummy_hash)
+        await verify_password(dummy_password, dummy_hash)
         return False
-    if not verify_password(plain_password, user.password_hash):
+    if not await verify_password(plain_password, user.password_hash):
         return False
     return user
 
 
-async def get_current_user(token: Annotated, session: AsyncSession):
+async def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    session: AsyncSession = Depends(get_async_session),
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
     try:
         payload = jwt.decode(token, secret_key, algorithms=[algorithm])
         username = payload.get("sub")
@@ -50,7 +54,7 @@ async def get_current_user(token: Annotated, session: AsyncSession):
 
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    session: Annotated[AsyncSession, Depends(get_async_session)],
+    session: AsyncSession,
 ) -> Token:
     user = await authenticate_user(form_data.username, form_data.password, session)
     if not user:
@@ -66,15 +70,20 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-async def require_roles(*roles: str):
-    async def check_roles(
-        current_user: Annotated[User, Depends(get_current_user)],
-    ) -> bool:
-        if not any(role in current_user.roles for role in roles):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You are not authorized to perform this action",
-            )
-        return True
+async def get_current_user_dep(
+    token: str = Depends(oauth2_scheme),
+    session: AsyncSession = Depends(get_async_session),
+):
+    return await get_current_user(token, session)
 
-    return await check_roles
+
+def require_roles_dep(*roles: str):
+    async def check_roles(user: User = Depends(get_current_user)):
+        user_roles = {role.id for role in user.roles}
+        if not any(id in user_roles for id in roles):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized"
+            )
+        return user
+
+    return check_roles
