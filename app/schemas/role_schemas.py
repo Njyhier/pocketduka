@@ -24,4 +24,4 @@ class RoleRead(BaseSchema):
 
 
 class UserRoleUpdate(BaseSchema):
-    role_ids: list[str]
+    role_names: set[str]
