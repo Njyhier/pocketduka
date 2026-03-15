@@ -13,4 +13,5 @@ class Product(BaseModel):
     price = Column(Numeric(10, 2))
     description = Column(Text)
     category = Column(String)
+    created_at = Column(DateTime, default=datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime, onupdate=lambda: datetime.now(timezone.utc))
