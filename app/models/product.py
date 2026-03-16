@@ -2,6 +2,7 @@ from sqlalchemy import Column, String, DateTime, Text, Numeric
 from .Base import BaseModel
 from datetime import datetime, timezone
 from sqlalchemy.orm import relationship
+from app.models.product_image import ProductImage
 
 import uuid
 

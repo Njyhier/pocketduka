@@ -1,6 +1,12 @@
 from contextlib import asynccontextmanager
 from app.db.db import create_db
-from .routers import user_router, product_router, role_router, permission_router
+from .routers import (
+    user_router,
+    product_router,
+    role_router,
+    permission_router,
+    image_router,
+)
 from fastapi import FastAPI
 
 
@@ -16,3 +22,4 @@ app.include_router(user_router.router)
 app.include_router(product_router.router)
 app.include_router(role_router.router)
 app.include_router(permission_router.router)
+app.include_router(image_router.router)

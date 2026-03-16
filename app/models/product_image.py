@@ -11,7 +11,7 @@ class ProductImage(BaseModel):
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     url = Column(String, unique=True, nullable=False)
-    filename = Column(String, unique=True, nullable=False)
+    file_name = Column(String, unique=True, nullable=False)
     is_main = Column(Boolean, default=False)
     product_id = Column(String, ForeignKey("products.id"), nullable=False)
     uploaded_at = Column(DateTime, default=datetime.now(timezone.utc))
