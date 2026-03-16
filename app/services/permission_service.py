@@ -2,7 +2,7 @@ from app.schemas.permission_schemas import PermissionCreate, PermissionUpdate
 from app.schemas.Baseschema import DeleteResponce
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.permissions import Permission
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Query
 from sqlalchemy import select
 
 
@@ -28,8 +28,14 @@ async def create_permission(
     return permission
 
 
-async def read_permissions(session: AsyncSession) -> list[Permission]:
-    result = await session.execute(select(Permission))
+async def read_permissions(
+    session: AsyncSession,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+) -> list[Permission]:
+    result = await session.execute(
+        select(Permission).offset(skip).limit(limit),
+    )
     permissions = result.scalars().all()
     if not permissions:
         raise HTTPException(

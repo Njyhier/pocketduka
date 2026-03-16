@@ -4,7 +4,7 @@ from app.schemas.user_schemas import (
 )
 from app.schemas.role_schemas import UserRoleUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Query
 from app.models.user import User
 from sqlalchemy import select, or_
 from app.utils.password import get_password_hash
@@ -40,8 +40,12 @@ async def create_user(session: AsyncSession, user_create: UserWrite) -> User:
     return db_user
 
 
-async def read_users(session: AsyncSession) -> list[User]:
-    result = await session.execute(select(User))
+async def read_users(
+    session: AsyncSession,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1),
+) -> list[User]:
+    result = await session.execute(select(User).offset(skip).limit(limit))
     users = result.scalars().all()
     return users
 

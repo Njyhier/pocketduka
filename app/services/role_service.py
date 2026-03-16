@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.models.roles import Role
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, status, Query
 from app.services.permission_service import read_permissions_by_ids
 import asyncio
 
@@ -32,8 +32,12 @@ async def create_role(role_data: RoleCreate, session: AsyncSession) -> Role:
     return role
 
 
-async def read_roles(session: AsyncSession) -> list[Role]:
-    result = await session.execute(select(Role).options(selectinload(Role.permissions)))
+async def read_roles(
+    session: AsyncSession,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1),
+) -> list[Role]:
+    result = await session.execute(select(Role).offset(skip).limit(limit).options(selectinload(Role.permissions)))
     roles = result.scalars().all()
     if not roles:
         raise HTTPException(

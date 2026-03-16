@@ -7,7 +7,7 @@ from app.schemas.product_schemas import (
 )
 from app.models.product import Product
 from sqlalchemy import select
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Query
 
 
 async def get_product_by_id(product_id: str, session: AsyncSession) -> Product:
@@ -41,8 +41,14 @@ async def update_product(
     return product_to_update
 
 
-async def read_products(session: AsyncSession) -> list[ProductRead]:
-    result = await session.execute(select(Product))
+async def read_products(
+    session: AsyncSession,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+) -> list[ProductRead]:
+    result = await session.execute(
+        select(Product).offset(skip).limit(limit),
+    )
     products = result.scalars().all()
 
     return products
