@@ -43,8 +43,8 @@ async def update_product(
 
 async def read_products(
     session: AsyncSession,
-    skip: int = Query(0, ge=0),
-    limit: int = Query(10, ge=1),
+    skip: int,
+    limit: int,
 ) -> list[ProductRead]:
     result = await session.execute(
         select(Product).offset(skip).limit(limit),

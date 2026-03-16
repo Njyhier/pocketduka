@@ -42,8 +42,8 @@ async def create_user(session: AsyncSession, user_create: UserWrite) -> User:
 
 async def read_users(
     session: AsyncSession,
-    skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1),
+    skip: int,
+    limit: int,
 ) -> list[User]:
     result = await session.execute(select(User).offset(skip).limit(limit))
     users = result.scalars().all()

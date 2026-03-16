@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from app.schemas.Baseschema import DeleteResponce
-from typing import List
 from app.schemas.permission_schemas import (
     PermissionCreate,
     PermissionRead,
@@ -30,14 +29,20 @@ async def create_permission_route(
 
 @router.get("/permissions", response_model=list[PermissionRead])
 async def read_permissions_route(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
     session: AsyncSession = Depends(get_async_session),
 ):
-    return await read_permissions(session)
+    return await read_permissions(
+        session,
+        skip=skip,
+        limit=limit,
+    )
 
 
 @router.get("/permissions/ids")
-async def read_perms(session: AsyncSession = Depends(get_async_session)):
-    return await read_permissions_by_ids(session)
+async def read_perms(ids: str, session: AsyncSession = Depends(get_async_session)):
+    return await read_permissions_by_ids(ids, session)
 
 
 @router.get("/permissions/{permission_id}", response_model=PermissionRead)

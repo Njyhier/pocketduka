@@ -7,12 +7,19 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.models.roles import Role
 from fastapi import HTTPException, status, Query
-from app.services.permission_service import read_permissions_by_ids
+from app.services.permission_service import (
+    read_permissions_by_ids,
+    get_permission_by_id,
+)
 import asyncio
 
 
 async def get_role_by_name(role_name: str, session: AsyncSession) -> Role:
-    result = await session.execute(select(Role).where(Role.name == role_name))
+    result = await session.execute(
+        select(Role)
+        .where(Role.name == role_name)
+        .options(selectinload(Role.permissions))
+    )
     role = result.scalar_one_or_none()
     if role is None:
         raise HTTPException(
@@ -34,10 +41,12 @@ async def create_role(role_data: RoleCreate, session: AsyncSession) -> Role:
 
 async def read_roles(
     session: AsyncSession,
-    skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1),
+    skip: int,
+    limit: int,
 ) -> list[Role]:
-    result = await session.execute(select(Role).offset(skip).limit(limit).options(selectinload(Role.permissions)))
+    result = await session.execute(
+        select(Role).offset(skip).limit(limit).options(selectinload(Role.permissions))
+    )
     roles = result.scalars().all()
     if not roles:
         raise HTTPException(
@@ -57,15 +66,12 @@ async def update_role(
     role_to_update = await get_role_by_name(role_name, session)
     update_data = update_data.model_dump(exclude_unset=True)
     if "permissions" in update_data:
-        permissions = await read_permissions_by_ids(*update_data.pop("permissions"))
-        for perm in permissions:
-            if perm not in role_to_update.permissions and perm is not None:
+        permission_ids = update_data.pop("permissions")
+        for id in permission_ids:
+            perm = await get_permission_by_id(id, session=session)
+            if perm not in role_to_update.permissions:
                 role_to_update.permissions.append(perm)
-
-    for key, value in update_data.items():
-        setattr(role_to_update, key, value)
-
-    await session.commit()
+        await session.commit()
     await session.refresh(role_to_update)
     return role_to_update
 

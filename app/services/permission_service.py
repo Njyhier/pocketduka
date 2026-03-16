@@ -30,8 +30,8 @@ async def create_permission(
 
 async def read_permissions(
     session: AsyncSession,
-    skip: int = Query(0, ge=0),
-    limit: int = Query(10, ge=1),
+    skip: int,
+    limit: int,
 ) -> list[Permission]:
     result = await session.execute(
         select(Permission).offset(skip).limit(limit),

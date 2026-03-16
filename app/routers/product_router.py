@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from app.schemas.product_schemas import ProductRead, ProductCreate, ProductUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_async_session
@@ -24,8 +24,14 @@ async def create_product_route(
 @router.get("/products")
 async def read_products_route(
     session: AsyncSession = Depends(get_async_session),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1),
 ):
-    return await read_products(session)
+    return await read_products(
+        session,
+        skip=skip,
+        limit=limit,
+    )
 
 
 @router.get("/products/{product_id}", response_model=ProductRead)
