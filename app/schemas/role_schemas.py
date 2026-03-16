@@ -14,7 +14,6 @@ class RoleCreate(BaseSchema):
 
 
 class RoleUpdate(BaseSchema):
-    name: Optional[str] = None
     permissions: Optional[list[str]] = None
 
 
