@@ -31,4 +31,5 @@ class Product(BaseModel):
     images = relationship(
         "ProductImage",
         back_populates="product",
+        cascade="all, delete-orphan",
     )
