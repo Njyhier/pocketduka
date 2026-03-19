@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, Text, Numeric
+from sqlalchemy import Column, String, DateTime, Text, Numeric, ForeignKey
 from .Base import BaseModel
 from datetime import datetime, timezone
 from sqlalchemy.orm import relationship
@@ -18,7 +18,8 @@ class Product(BaseModel):
     name = Column(String)
     price = Column(Numeric(10, 2))
     description = Column(Text)
-    category = Column(String)
+    category_id=Column(String, ForeignKey('categories.id'))
+    category = relationship('Category', back_populates='products')
     created_at = Column(
         DateTime,
         default=lambda: datetime.now(timezone.utc),
@@ -32,4 +33,10 @@ class Product(BaseModel):
         "ProductImage",
         back_populates="product",
         cascade="all, delete-orphan",
+    )
+    inventories = relationship(
+        "Inventory",
+        back_populates="product",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )

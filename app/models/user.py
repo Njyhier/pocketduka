@@ -21,3 +21,9 @@ class User(BaseModel):
     updated_at = Column(DateTime, onupdate=lambda: datetime.now(timezone.utc))
     password_hash = Column(String(60), nullable=False)
     roles = relationship("Role", secondary="user_roles", back_populates="users")
+    addresses = relationship(
+        "Address",
+        back_populates="user",
+        passive_deletes=True,
+        cascade="all, delete-orphan",
+    )
