@@ -1,4 +1,7 @@
 from pydantic import BaseModel
+from typing import TypeVar, Any
+
+T = TypeVar("T")
 
 
 class BaseSchema(BaseModel):
@@ -8,3 +11,8 @@ class BaseSchema(BaseModel):
 
 class DeleteResponce(BaseSchema):
     message: str
+
+
+class ApiResponse(BaseSchema):
+    message: str
+    payload: Any
