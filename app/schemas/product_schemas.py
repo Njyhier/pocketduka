@@ -9,7 +9,6 @@ class ProductBase(BaseSchema):
     name: str
     price: Decimal
     description: str
-    category: str
 
 
 class ProductRead(ProductBase):
@@ -17,7 +16,7 @@ class ProductRead(ProductBase):
 
 
 class ProductCreate(ProductBase):
-    pass
+    category_id: Optional[str]
 
 
 class ProductUpdate(BaseSchema):
