@@ -6,6 +6,7 @@ from .routers import (
     role_router,
     permission_router,
     image_router,
+    inventory_router,
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
@@ -32,3 +33,4 @@ app.include_router(product_router.router)
 app.include_router(role_router.router)
 app.include_router(permission_router.router)
 app.include_router(image_router.router)
+app.include_router(inventory_router.router)

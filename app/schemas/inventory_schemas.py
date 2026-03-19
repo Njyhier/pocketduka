@@ -2,7 +2,7 @@ from .Baseschema import BaseSchema
 from typing import Optional
 
 
-class InventoryCreate():
+class InventoryCreate(BaseSchema):
   product_id: str
   quantity: int
   reserved_quantity: Optional[str]
