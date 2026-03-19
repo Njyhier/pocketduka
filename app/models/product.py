@@ -18,8 +18,8 @@ class Product(BaseModel):
     name = Column(String)
     price = Column(Numeric(10, 2))
     description = Column(Text)
-    category_id=Column(String, ForeignKey('categories.id'))
-    category = relationship('Category', back_populates='products')
+    category_id = Column(String, ForeignKey("categories.id"))
+    category = relationship("Category", back_populates="products")
     created_at = Column(
         DateTime,
         default=lambda: datetime.now(timezone.utc),
