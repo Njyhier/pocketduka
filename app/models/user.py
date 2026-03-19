@@ -19,5 +19,5 @@ class User(BaseModel):
     username = Column(String(60), nullable=False, unique=True)
     created_at = Column(DateTime, default=datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime, onupdate=lambda: datetime.now(timezone.utc))
-    password_hash = Column(String(60))
+    password_hash = Column(String(60), nullable=False)
     roles = relationship("Role", secondary="user_roles", back_populates="users")
