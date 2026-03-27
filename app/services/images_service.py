@@ -40,3 +40,11 @@ async def add_image_to_db(
     await session.commit()
     await session.refresh(db_image)
     return {"message": "Image added successfully"}
+
+
+async def create_category_image():
+    pass
+
+
+async def upload_category_image():
+    pass

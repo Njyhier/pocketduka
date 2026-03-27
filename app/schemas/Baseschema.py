@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import TypeVar, Any
+from typing import TypeVar, Generic
 
 T = TypeVar("T")
 
@@ -13,6 +13,6 @@ class DeleteResponce(BaseSchema):
     message: str
 
 
-class ApiResponse(BaseSchema):
+class ApiResponse(BaseSchema, Generic[T]):
     message: str
-    payload: Any
+    payload: T

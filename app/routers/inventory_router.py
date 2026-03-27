@@ -3,6 +3,7 @@ from app.schemas.Baseschema import DeleteResponce, ApiResponse
 from app.schemas.inventory_schemas import (
     InventoryCreate,
     InventoryUpdate,
+    InventoryRead,
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_async_session
@@ -17,7 +18,7 @@ from app.services.inventory_service import (
 router = APIRouter()
 
 
-@router.post("/inventories", response_model=ApiResponse)
+@router.post("/inventories", response_model=ApiResponse[InventoryRead])
 async def add_inventory(
     inventory_data: InventoryCreate,
     session: AsyncSession = Depends(get_async_session),
@@ -29,18 +30,18 @@ async def add_inventory(
     }
 
 
-@router.get("/inventories", response_model=ApiResponse)
+@router.get("/inventories", response_model=ApiResponse[list[InventoryRead]])
 async def read_inventories(
     session: AsyncSession = Depends(get_async_session),
 ):
     inventories = await get_inventories(session=session)
     return {
         "message": "Inventories retrieved successfully",
-        "payload": list[inventories],
+        "payload": inventories,
     }
 
 
-@router.get("/inventories/{inventory_id}", response_model=ApiResponse)
+@router.get("/inventories/{inventory_id}", response_model=ApiResponse[InventoryRead])
 async def read_inventory_by_id(
     inventory_id: str,
     session: AsyncSession = Depends(get_async_session),
@@ -52,7 +53,7 @@ async def read_inventory_by_id(
     }
 
 
-@router.patch("/inventories/{inventory_id}", response_model=ApiResponse)
+@router.patch("/inventories/{inventory_id}", response_model=ApiResponse[InventoryRead])
 async def patch_inventory(
     inventory_id: str,
     patch_data: InventoryUpdate,

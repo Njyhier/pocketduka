@@ -13,7 +13,6 @@ from app.services.permission_service import (
     read_permission,
     delete_permission,
     update_permission,
-    read_permissions_by_ids,
 )
 
 router = APIRouter()
@@ -40,9 +39,9 @@ async def read_permissions_route(
     )
 
 
-@router.get("/permissions/ids")
-async def read_perms(ids: str, session: AsyncSession = Depends(get_async_session)):
-    return await read_permissions_by_ids(ids, session)
+# @router.get("/permissions/ids")
+# async def read_perms(ids: str, session: AsyncSession = Depends(get_async_session)):
+#     return await read_permissions_by_ids(ids, session)
 
 
 @router.get("/permissions/{permission_id}", response_model=PermissionRead)

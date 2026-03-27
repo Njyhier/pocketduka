@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_async_session
 from app.services.role_service import (
     create_role,
-    read_role,
+    get_role_by_name,
     read_roles,
     delete_role,
     update_role,
@@ -37,11 +37,11 @@ async def read_roles_route(
 
 
 @router.get("/roles/name", response_model=RoleRead)
-async def read_role_route(
+async def read_role_by_name_route(
     role_name: str,
     session: AsyncSession = Depends(get_async_session),
 ):
-    return await read_role(role_name, session)
+    return await get_role_by_name(role_name, session)
 
 
 @router.put("/roles/name", response_model=RoleRead)

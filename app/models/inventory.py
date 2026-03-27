@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from .Base import BaseModel
 from datetime import datetime, timezone
 import uuid
+from sqlalchemy import Numeric
 
 
 class Inventory(BaseModel):
@@ -22,6 +23,9 @@ class Inventory(BaseModel):
     product = relationship("Product", back_populates="inventories")
     quantity = Column(Integer, nullable=False, default=0)
     reserved_quantity = Column(Integer, nullable=False, default=0)
+    cost_price = Column(Numeric(10, 2), nullable=False)
+    selling_price = Column(Numeric(10, 2), nullable=False)
+
     created_at = Column(
         DateTime,
         nullable=False,
@@ -31,4 +35,4 @@ class Inventory(BaseModel):
         DateTime,
         onupdate=lambda: datetime.now(timezone.utc),
     )
-    location = Column(String(60), nullable=False, unique=True)
+    location = Column(String(60), nullable=True, unique=True)

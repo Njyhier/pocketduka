@@ -1,5 +1,4 @@
 from .Baseschema import BaseSchema
-from pydantic import FilePath, FileUrl
 
 
 class ImageCreate(BaseSchema):

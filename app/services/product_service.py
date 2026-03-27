@@ -5,13 +5,21 @@ from app.schemas.product_schemas import (
     ProductRead,
     DeleteResponce,
 )
+from sqlalchemy.orm import selectinload
 from app.models.product import Product
 from sqlalchemy import select
 from fastapi import HTTPException, status, Query
 
 
 async def get_product_by_id(product_id: str, session: AsyncSession) -> Product:
-    res = await session.execute(select(Product).where(Product.id == product_id))
+    res = await session.execute(
+        select(Product)
+        .options(
+            selectinload(Product.inventories),
+            selectinload(Product.images),
+        )
+        .where(Product.id == product_id)
+    )
     product = res.scalar_one_or_none()
     if product is None:
         raise HTTPException(
@@ -47,7 +55,7 @@ async def read_products(
     limit: int,
 ) -> list[ProductRead]:
     result = await session.execute(
-        select(Product).offset(skip).limit(limit),
+        select(Product).offset(skip).limit(limit).options(selectinload(Product.images)),
     )
     products = result.scalars().all()
 

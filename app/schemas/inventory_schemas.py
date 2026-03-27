@@ -3,21 +3,24 @@ from typing import Optional
 
 
 class InventoryCreate(BaseSchema):
-  product_id: str
-  quantity: int
-  reserved_quantity: Optional[str]
-  location: str
+    product_id: str
+    quantity: int
+    reserved_quantity: int
+    cost_price: float
+    selling_price: float
+
 
 class InventoryRead(BaseSchema):
-  product_id: str
-  quantity: int
-  reserved_quantity: Optional[str]
-  location: str
+    id: str
+    product_id: str
+    quantity: int
+    reserved_quantity: int
+    location: Optional[str]
+    model_config = {"from_attributes": True}
+
 
 class InventoryUpdate(BaseSchema):
-  product_id: Optional[str]
-  quantity: Optional[int]
-  reserved_quantity: Optional[str]
-  location: Optional[str]
-
-
+    product_id: Optional[str] = None
+    quantity: Optional[int] = None
+    reserved_quantity: Optional[int] = None
+    location: Optional[str] = None

@@ -15,12 +15,12 @@ class Address(BaseModel):
         default=lambda: str(uuid.uuid4()),
     )
 
-    user_id = Column(
-        String(60),
-        ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False,
+    
+    users = relationship(
+        "User",
+        secondary="user_addresses",
+        back_populates="addresses",
     )
-    user = relationship("User", back_populates="addresses")
     city = Column(String(150), nullable=True)
     county = Column(String, nullable=True)
     ward = Column(String, nullable=True)
@@ -30,8 +30,10 @@ class Address(BaseModel):
         default=datetime.now(timezone.utc),
         nullable=False,
     )
+
     updated_at = Column(
         DateTime,
         onupdate=lambda: datetime.now(timezone.utc),
     )
-    address=Column(String(60), nullable=True)
+    
+    address = Column(String(60), nullable=True)

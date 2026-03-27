@@ -18,8 +18,14 @@ class Product(BaseModel):
     name = Column(String)
     price = Column(Numeric(10, 2))
     description = Column(Text)
-    category_id = Column(String, ForeignKey("categories.id"))
-    category = relationship("Category", back_populates="products")
+    category_name = Column(
+        String,
+        ForeignKey("categories.name"),
+    )
+    category = relationship(
+        "Category",
+        back_populates="products",
+    )
     created_at = Column(
         DateTime,
         default=lambda: datetime.now(timezone.utc),
@@ -39,4 +45,8 @@ class Product(BaseModel):
         back_populates="product",
         cascade="all, delete-orphan",
         passive_deletes=True,
+    )
+    cart_items = relationship(
+        "CartItem",
+        back_populates="product",
     )

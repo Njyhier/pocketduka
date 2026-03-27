@@ -56,5 +56,5 @@ async def delete_inventory(inventory_id: str, session: AsyncSession):
 
 async def get_inventories(session: AsyncSession) -> list[Inventory]:
     result = await session.execute(select(Inventory))
-    inventories = result.scalars()
+    inventories = result.scalars().all()
     return inventories

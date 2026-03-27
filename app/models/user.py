@@ -23,7 +23,14 @@ class User(BaseModel):
     roles = relationship("Role", secondary="user_roles", back_populates="users")
     addresses = relationship(
         "Address",
-        back_populates="user",
+        secondary="user_addresses",
+        back_populates="users",
         passive_deletes=True,
-        cascade="all, delete-orphan",
+        cascade="all",
     )
+    cart = relationship(
+        "Cart",
+        back_populates="user",
+        uselist=False,
+    )
+ 

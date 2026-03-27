@@ -7,16 +7,16 @@ import uuid
 
 class ProductBase(BaseSchema):
     name: str
-    price: Decimal
     description: str
 
 
 class ProductRead(ProductBase):
     id: uuid.UUID
+    category_name: str
 
 
 class ProductCreate(ProductBase):
-    category_id: Optional[str]
+    category_name: Optional[str]
 
 
 class ProductUpdate(BaseSchema):

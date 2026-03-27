@@ -32,7 +32,7 @@ from app.services.user_service import (
 router = APIRouter()
 
 
-@router.post("/sign_up")
+@router.post("/sign_up", response_model=UserReadPrivate)
 async def sign_up(
     user_data: UserSignUp,
     session: AsyncSession = Depends(get_async_session),
@@ -53,7 +53,7 @@ async def login(
 async def create_user_route(
     user_data: UserWrite,
     session: AsyncSession = Depends(get_async_session),
-    _: bool = Depends(require_roles_dep("admin")),
+    _: bool = Depends(require_roles_dep("admin", "owner")),
 ):
     return await create_user(session, user_data)
 
@@ -61,7 +61,7 @@ async def create_user_route(
 @router.get("/users", response_model=list[UserReadPrivate])
 async def read_users_route(
     session: AsyncSession = Depends(get_async_session),
-    _: bool = Depends(require_roles_dep("admin", "owner")),
+    # _: bool = Depends(require_roles_dep("admin", "owner")),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1),
 ) -> list[UserReadPrivate]:

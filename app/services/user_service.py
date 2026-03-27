@@ -9,7 +9,7 @@ from app.models.user import User
 from sqlalchemy import select, or_
 from app.utils.password import get_password_hash
 from app.utils.user_utils import get_user_by_user_id
-from .role_service import read_roles_by_names, get_role_by_name
+from .role_service import get_role_by_name
 
 
 async def create_user(session: AsyncSession, user_create: UserWrite) -> User:
@@ -28,8 +28,6 @@ async def create_user(session: AsyncSession, user_create: UserWrite) -> User:
             detail="User already exists",
         )
     db_user = User(
-        first_name=user_create.first_name,
-        last_name=user_create.last_name,
         email=user_create.email,
         username=user_create.username,
         password_hash=await get_password_hash(user_create.password),

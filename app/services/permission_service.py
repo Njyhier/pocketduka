@@ -18,6 +18,20 @@ async def get_permission_by_id(permission_id: str, session: AsyncSession) -> Per
     return permission
 
 
+async def get_permission_by_name(
+    permission_name: str, session: AsyncSession
+) -> Permission:
+    result = await session.execute(
+        select(Permission).where(Permission.name == permission_name)
+    )
+    permission = result.scalar_one_or_none()
+    if permission is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Permission does not exist"
+        )
+    return permission
+
+
 async def create_permission(
     permission_data: PermissionCreate, session: AsyncSession
 ) -> Permission:

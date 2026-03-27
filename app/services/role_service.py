@@ -10,6 +10,7 @@ from fastapi import HTTPException, status, Query
 from app.services.permission_service import (
     read_permissions_by_ids,
     get_permission_by_id,
+    get_permission_by_name,
 )
 import asyncio
 
@@ -55,9 +56,9 @@ async def read_roles(
     return roles
 
 
-async def read_role(role_name: str, session: AsyncSession) -> Role:
-    role = await get_role_by_name(role_name, session)
-    return role
+# async def read_role(role_name: str, session: AsyncSession) -> Role:
+#     role = await get_role_by_name(role_name, session)
+#     return role
 
 
 async def update_role(
@@ -66,9 +67,9 @@ async def update_role(
     role_to_update = await get_role_by_name(role_name, session)
     update_data = update_data.model_dump(exclude_unset=True)
     if "permissions" in update_data:
-        permission_ids = update_data.pop("permissions")
-        for id in permission_ids:
-            perm = await get_permission_by_id(id, session=session)
+        permission_names = update_data.pop("permissions")
+        for name in permission_names:
+            perm = await get_permission_by_name(name, session=session)
             if perm not in role_to_update.permissions:
                 role_to_update.permissions.append(perm)
         await session.commit()
@@ -83,7 +84,7 @@ async def delete_role(role_name: str, session: AsyncSession) -> DeleteResponce:
     return {"message": "Role dleted successfuly"}
 
 
-async def read_roles_by_names(*role_names: str, session: AsyncSession) -> list[Role]:
-    caroutines = [get_role_by_name(role_name, session) for role_name in role_names]
-    result = await asyncio.gather(*caroutines)
-    return result
+# async def read_roles_by_names(*role_names: str, session: AsyncSession) -> list[Role]:
+#     caroutines = [get_role_by_name(role_name, session) for role_name in role_names]
+#     result = await asyncio.gather(*caroutines)
+#     return result

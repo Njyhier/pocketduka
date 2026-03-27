@@ -5,17 +5,12 @@ import uuid
 
 
 class UserWrite(BaseSchema):
-    first_name: str = Field(...)
-    last_name: str = Field(...)
     email: EmailStr = Field(...)
     username: str
     password: str
-    role_ids: Optional[list[str]]
 
 
 class UserSignUp(BaseSchema):
-    first_name: str = Field(...)
-    last_name: str = Field(...)
     email: EmailStr = Field(...)
     username: str
     password: str
@@ -24,8 +19,8 @@ class UserSignUp(BaseSchema):
 class UserReadPrivate(BaseSchema):
     id: uuid.UUID
     email: EmailStr
-    first_name: str
-    last_name: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     username: str
 
 
