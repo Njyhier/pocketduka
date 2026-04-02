@@ -3,12 +3,11 @@ from app.schemas.product_schemas import (
     ProductCreate,
     ProductUpdate,
     ProductRead,
-    DeleteResponce,
 )
 from sqlalchemy.orm import selectinload
 from app.models.product import Product
 from sqlalchemy import select
-from fastapi import HTTPException, status, Query
+from fastapi import HTTPException, status
 
 
 async def get_product_by_id(product_id: str, session: AsyncSession) -> Product:
@@ -17,6 +16,7 @@ async def get_product_by_id(product_id: str, session: AsyncSession) -> Product:
         .options(
             selectinload(Product.inventories),
             selectinload(Product.images),
+            selectinload(Product.category),
         )
         .where(Product.id == product_id)
     )
@@ -71,4 +71,7 @@ async def delete_product(product_id: str, session: AsyncSession) -> dict:
     product_to_delete = await get_product_by_id(product_id, session)
     await session.delete(product_to_delete)
     await session.commit()
-    return {"message": "Product deleted successfully"}
+    return {
+        "status": 200,
+        "message": "Product deleted successfully",
+    }

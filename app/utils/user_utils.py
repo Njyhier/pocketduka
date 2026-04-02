@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 from app.models.user import User
 from fastapi import HTTPException, status
@@ -9,9 +9,15 @@ user_not_found_exception = HTTPException(
 )
 
 
-async def get_user_by_username(username: str, session: AsyncSession) -> User:
+async def get_user_by_username(username: str, session: AsyncSession):
+    username = username.strip()
     result = await session.execute(
-        select(User).where(User.username == username).options(selectinload(User.roles))
+        select(User)
+        .where(User.username == username)
+        .options(
+            selectinload(User.roles),
+            selectinload(User.cart),
+        )
     )
     user = result.scalar_one_or_none()
     if user is None:
@@ -21,7 +27,7 @@ async def get_user_by_username(username: str, session: AsyncSession) -> User:
 
 async def get_user_by_email(email: str, session: AsyncSession):
     email = email.strip().lower()
-    result = await session.execute(select(User).where(User.email == email))
+    result = await session.execute(select(User).where(func.lower(User.email) == email))
     user = result.scalar_one_or_none()
     if not user:
         raise user_not_found_exception
@@ -29,6 +35,7 @@ async def get_user_by_email(email: str, session: AsyncSession):
 
 
 async def get_user_by_user_id(user_id: str, session: AsyncSession):
+    user_id = user_id.strip()
     result = await session.execute(
         select(User)
         .where(User.id == user_id)

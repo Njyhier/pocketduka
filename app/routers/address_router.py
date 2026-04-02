@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_async_session
-from app.schemas.Baseschema import ApiResponse, DeleteResponce
+from app.schemas.Baseschema import ApiResponse
 from app.schemas.address_schemas import AddressCreate, AddressUpdate, AddressRead
 from app.models.user import User
 from app.services.auth_service import get_current_user
@@ -20,11 +20,14 @@ router = APIRouter()
 async def add_address(
     address_data: AddressCreate,
     session: AsyncSession = Depends(get_async_session),
-    user:User = Depends(get_current_user)
+    user: User = Depends(get_current_user),
 ):
-    payload = await create_address(address_data=address_data, session=session, user=user)
+    payload = await create_address(
+        address_data=address_data, session=session, user=user
+    )
     return {
-        "message": "Addresses added successfully",
+        "status": 200,
+        "message": "Address added successfully",
         "payload": payload,
     }
 
@@ -35,6 +38,7 @@ async def get_addresses(
 ):
     addresses = await read_addresses(session=session)
     return {
+        "status": 200,
         "message": "Addresses retrieved successfully",
         "payload": addresses,
     }
@@ -47,6 +51,7 @@ async def read_address_by_id(
 ):
     address = await get_address_by_id(address_id=address_id, session=session)
     return {
+        "status": 200,
         "message": "Retrieve address successful",
         "payload": address,
     }
@@ -64,12 +69,13 @@ async def patch_address(
         session=session,
     )
     return {
+        "status": 200,
         "message": "Address updated successfully",
         "payload": payload,
     }
 
 
-@router.delete("/addresses/{address_id}", response_model=DeleteResponce)
+@router.delete("/addresses/{address_id}", response_model=ApiResponse)
 async def remove_address(
     address_id: str,
     session: AsyncSession = Depends(get_async_session),

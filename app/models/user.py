@@ -33,4 +33,3 @@ class User(BaseModel):
         back_populates="user",
         uselist=False,
     )
- 

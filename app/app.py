@@ -11,6 +11,7 @@ from .routers import (
     address_router,
     cart_item_router,
     cart_router,
+    order_router,
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
@@ -42,3 +43,4 @@ app.include_router(category_router.router)
 app.include_router(address_router.router)
 app.include_router(cart_router.router)
 app.include_router(cart_item_router.router)
+app.include_router(order_router.router)

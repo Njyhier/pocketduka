@@ -14,6 +14,7 @@ class CartItem(BaseModel):
         nullable=False,
         default=lambda: str(uuid.uuid4()),
     )
+    name = Column(String(60))
     product_id = Column(
         String(60),
         ForeignKey("products.id"),
@@ -39,6 +40,7 @@ class CartItem(BaseModel):
         Numeric(10, 2),
         nullable=False,
     )
+    category = Column(String(60))
 
     image_url = Column(
         String,

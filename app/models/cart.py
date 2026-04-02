@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Numeric, ForeignKey, DateTime
+from sqlalchemy import Column, String, ForeignKey, DateTime, Integer
 from sqlalchemy.orm import relationship
 from .Base import BaseModel
 import uuid
@@ -38,12 +38,13 @@ class Cart(BaseModel):
         "User",
         back_populates="cart",
     )
+    orders = relationship("Order", back_populates="cart")
 
     @property
     def subtotal(self):
         return sum(item.subtotal for item in self.items)
 
     @property
-    def total_items(self):
+    def total_items(self) -> Integer:
         items = {item.quantity for item in self.items}
         return sum(items)

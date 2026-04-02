@@ -13,6 +13,7 @@ class ProductBase(BaseSchema):
 class ProductRead(ProductBase):
     id: uuid.UUID
     category_name: str
+    price: Optional[float]
 
 
 class ProductCreate(ProductBase):

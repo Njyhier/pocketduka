@@ -1,8 +1,8 @@
 from app.schemas.permission_schemas import PermissionCreate, PermissionUpdate
-from app.schemas.Baseschema import DeleteResponce
+from app.schemas.Baseschema import ApiResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.permissions import Permission
-from fastapi import HTTPException, status, Query
+from fastapi import HTTPException, status
 from sqlalchemy import select
 
 
@@ -75,9 +75,7 @@ async def update_permission(
     return permission_to_update
 
 
-async def delete_permission(
-    permission_id: str, session: AsyncSession
-) -> DeleteResponce:
+async def delete_permission(permission_id: str, session: AsyncSession) -> ApiResponse:
     permission_to_delete = await get_permission_by_id(permission_id, session)
     await session.delete(permission_to_delete)
     await session.commit()

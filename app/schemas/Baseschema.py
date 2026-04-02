@@ -1,18 +1,15 @@
 from pydantic import BaseModel
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, Optional
 
 T = TypeVar("T")
 
 
 class BaseSchema(BaseModel):
     class Config:
-        from_orm = True
-
-
-class DeleteResponce(BaseSchema):
-    message: str
+        from_attributes = True
 
 
 class ApiResponse(BaseSchema, Generic[T]):
-    message: str
-    payload: T
+    status: Optional[int]
+    message: Optional[str]
+    payload: Optional[T]

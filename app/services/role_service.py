@@ -1,15 +1,12 @@
 from app.schemas.role_schemas import RoleCreate, RoleUpdate
-from app.schemas.Baseschema import DeleteResponce
-from app.models import user
-from app.services.auth_service import get_current_user
+from app.schemas.Baseschema import ApiResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.models.roles import Role
-from fastapi import HTTPException, status, Query
+from fastapi import HTTPException, status
 from app.services.permission_service import (
     read_permissions_by_ids,
-    get_permission_by_id,
     get_permission_by_name,
 )
 import asyncio
@@ -77,7 +74,7 @@ async def update_role(
     return role_to_update
 
 
-async def delete_role(role_name: str, session: AsyncSession) -> DeleteResponce:
+async def delete_role(role_name: str, session: AsyncSession) -> ApiResponse:
     role_to_delete = await get_role_by_name(role_name, session)
     await session.delete(role_to_delete)
     await session.commit()

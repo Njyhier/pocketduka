@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Query
-from app.schemas.Baseschema import DeleteResponce
+from app.schemas.Baseschema import ApiResponse
 from app.schemas.permission_schemas import (
     PermissionCreate,
     PermissionRead,
@@ -61,7 +61,7 @@ async def update_permission_route(
     return await update_permission(permission_id, permission_data, session)
 
 
-@router.delete("/permissions/{permission_id}", response_model=DeleteResponce)
+@router.delete("/permissions/{permission_id}", response_model=ApiResponse)
 async def delete_permission_route(
     permission_id: str,
     session: AsyncSession = Depends(get_async_session),

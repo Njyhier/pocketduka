@@ -12,7 +12,7 @@ from app.utils.user_utils import get_user_by_user_id
 from .role_service import get_role_by_name
 
 
-async def create_user(session: AsyncSession, user_create: UserWrite) -> User:
+async def create_user(session: AsyncSession, user_create: UserWrite):
     res = await session.execute(
         select(User).where(
             or_(
@@ -42,7 +42,7 @@ async def read_users(
     session: AsyncSession,
     skip: int,
     limit: int,
-) -> list[User]:
+):
     result = await session.execute(select(User).offset(skip).limit(limit))
     users = result.scalars().all()
     return users
@@ -52,7 +52,7 @@ async def update_user(
     user_update: UserUpdate,
     user_id: str,
     session: AsyncSession,
-) -> User:
+):
     user_to_update = await get_user_by_user_id(user_id, session)
     update_data = user_update.model_dump(exclude_unset=True)
     for key, value in update_data.items():

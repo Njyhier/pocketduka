@@ -10,6 +10,7 @@ from app.utils.access_token import (
 from app.utils.user_utils import get_user_by_username
 from app.utils.password import verify_password, password_hash
 from typing import Annotated
+
 from app.models.user import User
 from datetime import timedelta
 from app.db.session import get_async_session
@@ -37,8 +38,8 @@ async def get_current_user(
     session: AsyncSession = Depends(get_async_session),
 ):
     credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        status_code=401,
+        detail="Unauthenticated",
         headers={"WWW-Authenticate": "Bearer"},
     )
 
@@ -90,8 +91,13 @@ def require_roles_dep(*roles: str):
     async def check_roles(user_roles: set[str] = Depends(get_user_roles)):
         if not any(name in user_roles for name in roles):
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized"
+                status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden"
             )
-        return True
+        return user_roles
 
     return check_roles
+
+
+async def get_current_user_roles(user):
+    roles = [role.name for role in user.roles]
+    return roles

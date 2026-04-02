@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Query
-from app.schemas.Baseschema import DeleteResponce
+from app.schemas.Baseschema import ApiResponse
 from app.schemas.role_schemas import BaseRole, RoleCreate, RoleRead, RoleUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_async_session
@@ -53,7 +53,7 @@ async def update_role_permissions(
     return await update_role(role_name, role_data, session)
 
 
-@router.delete("/roles/name", response_model=DeleteResponce)
+@router.delete("/roles/name", response_model=ApiResponse)
 async def delete_role_route(
     role_name: str,
     session: AsyncSession = Depends(get_async_session),

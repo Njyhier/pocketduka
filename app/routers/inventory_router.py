@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, Query, HTTPException, status
-from app.schemas.Baseschema import DeleteResponce, ApiResponse
+from fastapi import APIRouter, Depends
+from app.schemas.Baseschema import ApiResponse
 from app.schemas.inventory_schemas import (
     InventoryCreate,
     InventoryUpdate,
@@ -70,7 +70,7 @@ async def patch_inventory(
     }
 
 
-@router.delete("/inventories/{inventory_id}", response_model=DeleteResponce)
+@router.delete("/inventories/{inventory_id}", response_model=ApiResponse)
 async def remove_inventory(
     inventory_id: str,
     session: AsyncSession = Depends(get_async_session),

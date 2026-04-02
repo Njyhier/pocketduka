@@ -50,7 +50,7 @@ async def delete_address(address_id: str, session: AsyncSession):
     address_to_delete = await get_address_by_id(address_id=address_id, session=session)
     await session.delete(address_to_delete)
     await session.commit()
-    return {"message": "Address deleted successfully"}
+    return {"status": 200, "message": "Address deleted successfully"}
 
 
 async def update_address(

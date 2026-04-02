@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_async_session
-from app.schemas.Baseschema import ApiResponse, DeleteResponce
+from app.schemas.Baseschema import ApiResponse
 from app.schemas.category_schemas import CategoryCreate, CategoryUpdate, CategoryRead
 from app.services.category_service import (
     create_category,
@@ -66,7 +66,7 @@ async def patch_category(
     }
 
 
-@router.delete("/categories/{category_id}", response_model=DeleteResponce)
+@router.delete("/categories/{category_id}", response_model=ApiResponse)
 async def remove_category(
     category_id: str,
     session: AsyncSession = Depends(get_async_session),
