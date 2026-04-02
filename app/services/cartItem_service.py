@@ -34,10 +34,12 @@ async def create_cart_item(
     )
     cart = await cart_service.get_cart_by_id(cart_id=cart_id, session=session)
     item = CartItem(
+        name=product.name,
         product_id=product.id,
         cart_id=cart.id,
         price=product.inventories[0].selling_price,
         image_url=product.images[0].url if product.images else None,
+        category=product.category.name,
     )
     session.add(item)
     await session.commit()
@@ -97,4 +99,8 @@ async def add_item_to_cart(product_id: str, cart_id: str, session: AsyncSession)
             product_id=product_id, cart_id=cart_id, session=session
         )
 
-    # return {"status": 200, "message": "Item added to cart successfully"}
+
+async def read_cart_items(cart_id: str, session: AsyncSession):
+    result = await session.execute(select(CartItem).where(CartItem.cart_id == cart_id))
+    items = result.scalars().all()
+    return items
