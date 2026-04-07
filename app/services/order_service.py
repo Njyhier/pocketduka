@@ -62,3 +62,9 @@ async def read_orders_by_cart_id(cart_id: str, session: AsyncSession):
     result = await session.execute(select(Order).where(Order.cart_id == cart_id))
     orders = result.scalars().all()
     return orders
+
+
+async def get_all_orders(session: AsyncSession):
+    result = await session.execute(select(Order))
+    orders = result.scalars().all()
+    return orders

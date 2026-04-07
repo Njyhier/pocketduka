@@ -26,12 +26,12 @@ class Cart(BaseModel):
     )
 
     created_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
     )
     updated_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         onupdate=lambda: datetime.now(timezone.utc),
     )
     user = relationship(
@@ -46,5 +46,5 @@ class Cart(BaseModel):
 
     @property
     def total_items(self) -> Integer:
-        items = {item.quantity for item in self.items}
+        items = [item.quantity for item in self.items]
         return sum(items)

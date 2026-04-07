@@ -42,16 +42,20 @@ async def get_current_user(
         detail="Unauthenticated",
         headers={"WWW-Authenticate": "Bearer"},
     )
-
+    print("Get current user called")
     try:
         payload = jwt.decode(token, secret_key, algorithms=[algorithm])
+        print(payload)
         username = payload.get("sub")
+
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
+        print(token_data)
     except InvalidTokenError:
         raise credentials_exception
     user = await get_user_by_username(username=token_data.username, session=session)
+    print(user)
     if user is None:
         raise credentials_exception
     return user
@@ -72,6 +76,7 @@ async def login_for_access_token(
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
+    print(access_token)
     return Token(access_token=access_token, token_type="bearer")
 
 

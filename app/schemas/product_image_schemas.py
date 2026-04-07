@@ -9,3 +9,9 @@ class ImageCreate(BaseSchema):
 
 class PostImageSuccess(BaseSchema):
     message: str
+
+
+class ImageRead(BaseSchema):
+    url: str
+    file_name: str
+    product_id: str

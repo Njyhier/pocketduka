@@ -27,12 +27,12 @@ class Inventory(BaseModel):
     selling_price = Column(Numeric(10, 2), nullable=False)
 
     created_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
     )
     updated_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         onupdate=lambda: datetime.now(timezone.utc),
     )
     location = Column(String(60), nullable=True, unique=True)

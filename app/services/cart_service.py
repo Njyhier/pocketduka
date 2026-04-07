@@ -42,8 +42,8 @@ async def create_cart(user_id: str, session: AsyncSession):
         )
     db_cart = Cart(user_id=user_id)
     session.add(db_cart)
-    await session.commit()
-    await session.refresh(db_cart)
+    # await session.commit()
+    # await session.refresh(db_cart)
     return db_cart
 
 

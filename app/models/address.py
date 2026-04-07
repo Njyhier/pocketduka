@@ -15,7 +15,6 @@ class Address(BaseModel):
         default=lambda: str(uuid.uuid4()),
     )
 
-    
     users = relationship(
         "User",
         secondary="user_addresses",
@@ -26,14 +25,14 @@ class Address(BaseModel):
     ward = Column(String, nullable=True)
     street = Column(String, nullable=True)
     created_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         default=datetime.now(timezone.utc),
         nullable=False,
     )
 
     updated_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         onupdate=lambda: datetime.now(timezone.utc),
     )
-    
+
     address = Column(String(60), nullable=True)

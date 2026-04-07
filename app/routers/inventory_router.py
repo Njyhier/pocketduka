@@ -25,6 +25,7 @@ async def add_inventory(
 ):
     payload = await create_inventory(inventory_data=inventory_data, session=session)
     return {
+        "status": 201,
         "message": "Inventory added successfully",
         "payload": payload,
     }
@@ -36,18 +37,22 @@ async def read_inventories(
 ):
     inventories = await get_inventories(session=session)
     return {
+        "status": 200,
         "message": "Inventories retrieved successfully",
         "payload": inventories,
     }
 
 
-@router.get("/inventories/{inventory_id}", response_model=ApiResponse[InventoryRead])
+@router.get(
+    "/inventories/{inventory_id}", response_model=ApiResponse[list[InventoryRead]]
+)
 async def read_inventory_by_id(
     inventory_id: str,
     session: AsyncSession = Depends(get_async_session),
 ):
     inventory = await get_inventory_by_id(inventory_id=inventory_id, session=session)
     return {
+        "status": 200,
         "message": "Retrieve inventory successful",
         "payload": inventory,
     }
@@ -65,6 +70,7 @@ async def patch_inventory(
         session=session,
     )
     return {
+        "status": 200,
         "message": "Inventory updated successfully",
         "payload": payload,
     }

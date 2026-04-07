@@ -13,6 +13,8 @@ from .routers import (
     cart_router,
     order_router,
 )
+
+from app.routers.users import users_routes
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
@@ -33,7 +35,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(user_router.router)
+app.include_router(users_routes.router)
 app.include_router(product_router.router)
 app.include_router(role_router.router)
 app.include_router(permission_router.router)

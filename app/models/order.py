@@ -17,12 +17,12 @@ class Order(BaseModel):
     total_amount = Column(Numeric(10, 2), nullable=False)
     status = Column(String(20), nullable=False, default="Pending")
     created_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
     )
     updated_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         onupdate=lambda: datetime.now(timezone.utc),
     )
     items = relationship("OrderItem", back_populates="order")

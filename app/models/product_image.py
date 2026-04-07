@@ -14,5 +14,5 @@ class ProductImage(BaseModel):
     file_name = Column(String, unique=True, nullable=False)
     is_main = Column(Boolean, default=False)
     product_id = Column(String, ForeignKey("products.id"), nullable=False)
-    uploaded_at = Column(DateTime, default=datetime.now(timezone.utc))
+    uploaded_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
     product = relationship("Product", back_populates="images")

@@ -24,11 +24,15 @@ engine: AsyncEngine = create_async_engine(DB_URL, echo=True)
 
 @event.listens_for(engine.sync_engine, "connect")
 def enable_sqlite_fk(dbapi_connection, connection_record):
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
+    from sqlite3 import Connection as SQLite3Connection
+
+    if isinstance(dbapi_connection, SQLite3Connection):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
 
 
 async def create_db():
     async with engine.begin() as conn:
         await conn.run_sync(BaseModel.metadata.create_all)
+        print(BaseModel.metadata.tables.keys())

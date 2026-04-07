@@ -21,6 +21,7 @@ async def add_category(
 ):
     payload = await create_category(category_data=category_data, session=session)
     return {
+        "status": 201,
         "message": "Category added successfully",
         "payload": payload,
     }

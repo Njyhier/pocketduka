@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.permissions import Permission
 from fastapi import HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 
 async def get_permission_by_id(permission_id: str, session: AsyncSession) -> Permission:
@@ -22,7 +23,9 @@ async def get_permission_by_name(
     permission_name: str, session: AsyncSession
 ) -> Permission:
     result = await session.execute(
-        select(Permission).where(Permission.name == permission_name)
+        select(Permission)
+        .where(Permission.name == permission_name)
+        .options(selectinload(Permission.roles))
     )
     permission = result.scalar_one_or_none()
     if permission is None:

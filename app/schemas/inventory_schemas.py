@@ -15,6 +15,7 @@ class InventoryRead(BaseSchema):
     product_id: str
     quantity: int
     reserved_quantity: int
+    selling_price: float
     location: Optional[str]
     model_config = {"from_attributes": True}
 

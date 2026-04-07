@@ -27,12 +27,12 @@ class Product(BaseModel):
         back_populates="products",
     )
     created_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
     updated_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         onupdate=lambda: datetime.now(timezone.utc),
     )
     images = relationship(

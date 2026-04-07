@@ -33,7 +33,7 @@ async def create_product(product_data: ProductCreate, session: AsyncSession) -> 
     session.add(db_product)
     await session.commit()
     await session.refresh(db_product)
-    return db_product
+    return db_product.id
 
 
 async def update_product(
@@ -55,7 +55,10 @@ async def read_products(
     limit: int,
 ) -> list[ProductRead]:
     result = await session.execute(
-        select(Product).offset(skip).limit(limit).options(selectinload(Product.images)),
+        select(Product)
+        .offset(skip)
+        .limit(limit)
+        .options(selectinload(Product.images), selectinload(Product.inventories)),
     )
     products = result.scalars().all()
 
@@ -75,3 +78,7 @@ async def delete_product(product_id: str, session: AsyncSession) -> dict:
         "status": 200,
         "message": "Product deleted successfully",
     }
+
+
+async def create_order_with_images():
+    pass

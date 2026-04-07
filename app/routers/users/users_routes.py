@@ -20,7 +20,6 @@ from app.models.user import User
 from app.services.auth_service import login_for_access_token
 from app.middlewares.rbac_middleware import SystemTasks
 
-
 from app.schemas.user_schemas import (
     UserReadPrivate,
     UserWrite,
@@ -62,9 +61,11 @@ async def login(
 
 
 @router.post("/users", response_model=ApiResponse[UserReadPrivate])
+@SystemTasks("create_users")
 async def create_user_route(
     user_data: UserWrite,
     session: AsyncSession = Depends(get_async_session),
+    _: bool = Depends(require_roles_dep("admin", "owner")),
 ):
     payload = await create_user(session, user_data)
     return {
@@ -75,7 +76,7 @@ async def create_user_route(
 
 
 @router.get("/users", response_model=ApiResponse[list[UserReadPrivate]])
-# @SystemTasks("read_users")
+@SystemTasks("read_users")
 async def read_users_route(
     session: AsyncSession = Depends(get_async_session),
     skip: int = Query(0, ge=0),
@@ -90,6 +91,7 @@ async def read_users_route(
 
 
 @router.get("/users/by_email", response_model=ApiResponse[UserReadPrivate])
+@SystemTasks("read_users")
 async def read_user_by_email(
     email: str, session: AsyncSession = Depends(get_async_session)
 ):
@@ -102,6 +104,7 @@ async def read_user_by_email(
 
 
 @router.get("/users/by_username", response_model=ApiResponse[UserReadPrivate])
+@SystemTasks("read_users")
 async def get_user_by_username_route(
     username: str, session: AsyncSession = Depends(get_async_session)
 ):
@@ -114,6 +117,7 @@ async def get_user_by_username_route(
 
 
 @router.get("/users/{user_id}", response_model=ApiResponse[UserReadPrivate])
+@SystemTasks("read_users")
 async def read_user_route(
     user_id: str,
     session: AsyncSession = Depends(get_async_session),
@@ -128,6 +132,7 @@ async def read_user_route(
 
 
 @router.put("/users/{user_id}", response_model=ApiResponse[UserReadPrivate])
+@SystemTasks("update_users")
 async def update_user_route(
     user_data: UserUpdate,
     user_id: str,
@@ -143,15 +148,16 @@ async def update_user_route(
 
 
 @router.delete("/users/{user_id}")
+@SystemTasks("delete-users")
 async def delete_user_route(
     user_id: str,
     session: AsyncSession = Depends(get_async_session),
-    _: bool = Depends(require_roles_dep("admin", "owner")),
 ):
     return await delete_user(user_id, session)
 
 
 @router.patch("/users/{user_id}/roles")
+@SystemTasks("update_users")
 async def update_user_roles_route(
     user_id: str,
     role_update: UserRoleUpdate,
@@ -172,6 +178,7 @@ async def edit_profile(
 
 
 @router.get("/user/roles", response_model=ApiResponse[list[str]])
+@SystemTasks("read_user_roles")
 async def get_roles_route(
     user=Depends(get_current_user),
     _: bool = Depends(require_roles_dep("admin", "owner")),

@@ -12,8 +12,12 @@ class Role(BaseModel):
 
     id = Column(String(60), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String(250), nullable=False, unique=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc), nullable=False)
-    updated_at = Column(DateTime, onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(
+        DateTime(timezone=True), default=datetime.now(timezone.utc), nullable=False
+    )
+    updated_at = Column(
+        DateTime(timezone=True), onupdate=lambda: datetime.now(timezone.utc)
+    )
     permissions = relationship(
         "Permission", secondary="role_permissions", back_populates="roles"
     )

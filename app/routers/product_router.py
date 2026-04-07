@@ -3,12 +3,18 @@ from app.schemas.product_schemas import (
     ProductRead,
     ProductCreate,
     ProductUpdate,
+    ProductCreateRead,
 )
 from app.schemas.Baseschema import ApiResponse
 from app.models.user import User
-from app.services.auth_service import get_current_user
+
+# from app.services.auth_service import get_current_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_async_session
+
+from app.middlewares.rbac_middleware import SystemTasks
+
+# from app.routers.rbac_routes import RBACRoute
 from app.services.product_service import (
     create_product,
     read_products,
@@ -20,7 +26,8 @@ from app.services.product_service import (
 router = APIRouter()
 
 
-@router.post("/products", response_model=ApiResponse)
+@router.post("/products")
+@SystemTasks("create_products")
 async def create_product_route(
     product_create: ProductCreate,
     session: AsyncSession = Depends(get_async_session),
@@ -38,7 +45,6 @@ async def read_products_route(
     session: AsyncSession = Depends(get_async_session),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1),
-    _: User = Depends(get_current_user),
 ):
     payload = await read_products(
         session,
@@ -52,7 +58,7 @@ async def read_products_route(
     }
 
 
-@router.get("/products/{product_id}", response_model=ProductRead)
+@router.get("/products/{product_id}", response_model=ApiResponse[ProductRead])
 async def read_product_route(
     product_id: str,
     session: AsyncSession = Depends(get_async_session),
@@ -66,6 +72,7 @@ async def read_product_route(
 
 
 @router.delete("/products/{product_id}")
+@SystemTasks("delete_products")
 async def delete_product_route(
     product_id: str,
     session: AsyncSession = Depends(get_async_session),
@@ -74,6 +81,7 @@ async def delete_product_route(
 
 
 @router.patch("/products/{id}", response_model=ProductRead)
+@SystemTasks("update_products")
 async def patch_product_route(
     update_data: ProductUpdate,
     id: str,

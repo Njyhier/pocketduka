@@ -4,12 +4,13 @@ from app.schemas.user_schemas import (
 )
 from app.schemas.role_schemas import UserRoleUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status, Query
+from fastapi import HTTPException, status
 from app.models.user import User
 from sqlalchemy import select, or_
 from app.utils.password import get_password_hash
 from app.utils.user_utils import get_user_by_user_id
 from .role_service import get_role_by_name
+from app.services.cart_service import create_cart
 
 
 async def create_user(session: AsyncSession, user_create: UserWrite):
@@ -33,6 +34,8 @@ async def create_user(session: AsyncSession, user_create: UserWrite):
         password_hash=await get_password_hash(user_create.password),
     )
     session.add(db_user)
+    await session.flush()
+    await create_cart(user_id=db_user.id, session=session)
     await session.commit()
     await session.refresh(db_user)
     return db_user
