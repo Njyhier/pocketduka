@@ -65,7 +65,6 @@ async def login(
 async def create_user_route(
     user_data: UserWrite,
     session: AsyncSession = Depends(get_async_session),
-    _: bool = Depends(require_roles_dep("admin", "owner")),
 ):
     payload = await create_user(session, user_data)
     return {
@@ -137,7 +136,6 @@ async def update_user_route(
     user_data: UserUpdate,
     user_id: str,
     session: AsyncSession = Depends(get_async_session),
-    _: bool = Depends(require_roles_dep("admin", "owner")),
 ):
     payload = await update_user(user_data, user_id, session)
     return {
@@ -181,7 +179,6 @@ async def edit_profile(
 @SystemTasks("read_user_roles")
 async def get_roles_route(
     user=Depends(get_current_user),
-    _: bool = Depends(require_roles_dep("admin", "owner")),
 ):
     payload = await get_user_roles(
         user=user,

@@ -18,6 +18,8 @@ from sqlalchemy import event
 
 load_dotenv()
 DB_URL = os.getenv("DB_URL")
+if not DB_URL:
+    raise ValueError("DATABASE_URL is not set")
 
 engine: AsyncEngine = create_async_engine(DB_URL, echo=True)
 
