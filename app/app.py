@@ -30,7 +30,7 @@ app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://pocketduka.vercel.app/",
+        "https://pocketduka.vercel.app",
         "http://localhost:4200",
         "http://127.0.0.1:8000",
     ],
