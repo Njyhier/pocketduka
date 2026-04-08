@@ -22,6 +22,7 @@ async def get_permission_by_id(permission_id: str, session: AsyncSession) -> Per
 async def get_permission_by_name(
     permission_name: str, session: AsyncSession
 ) -> Permission:
+    print("GETTING PERMISSION BY NAME")
     result = await session.execute(
         select(Permission)
         .where(Permission.name == permission_name)

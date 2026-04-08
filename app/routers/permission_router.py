@@ -5,6 +5,7 @@ from app.schemas.permission_schemas import (
     PermissionRead,
     PermissionUpdate,
 )
+from app.middlewares.rbac_middleware import SystemTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_async_session
 from app.services.permission_service import (
@@ -27,6 +28,7 @@ async def create_permission_route(
 
 
 @router.get("/permissions", response_model=list[PermissionRead])
+@SystemTasks("read_permissions")
 async def read_permissions_route(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1),
