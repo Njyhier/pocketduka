@@ -34,11 +34,8 @@ class Order(BaseModel):
     cart = relationship("Cart", back_populates="orders")
 
     def update_status(self):
-        if self.status == "Delivered":
+        if self.status == "Approved":
             return
         if self.status == "Pending":
-            self.status = "In transit"
-            return
-        if self.status == "In transit":
-            self.status = "Delivered"
+            self.status = "Approved"
             return
