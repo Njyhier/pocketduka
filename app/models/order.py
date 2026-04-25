@@ -33,6 +33,10 @@ class Order(BaseModel):
     )
     cart = relationship("Cart", back_populates="orders")
     payment = relationship("Payment", back_populates="order")
+    payment_id = Column(
+        String,
+        ForeignKey("payments.id"),
+    )
 
     def update_status(self):
         if self.status == "Approved":

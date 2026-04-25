@@ -29,3 +29,4 @@ class Data(BaseSchema):
     order_id: str
     user_id: str
     phone_number: str
+    amount: str

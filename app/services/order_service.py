@@ -6,15 +6,17 @@ from app.models.order import Order
 from app.services.cart_service import get_cart_by_user_id
 from app.services.order_item_service import create_order_item
 from app.services.cart_service import clear_cart_items
+from app.services.payment_service import create_payment
 
 
-async def create_order_with_items(user_id: str, session: AsyncSession):
+async def create_order_with_items(user_id: str, payment_id: str, session: AsyncSession):
     cart = await get_cart_by_user_id(user_id=user_id, session=session)
 
     cart_id = cart.id
     db_order = Order(
         cart_id=cart_id,
         total_amount=cart.subtotal,
+        payment_id=payment_id,
     )
     session.add(db_order)
     await session.flush()
@@ -27,8 +29,6 @@ async def create_order_with_items(user_id: str, session: AsyncSession):
         )
         order_items.append(order_item)
     await clear_cart_items(cart_id=cart_id, session=session)
-    await session.commit()
-    await session.refresh(db_order)
 
     return {
         "order": db_order,

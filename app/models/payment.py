@@ -66,10 +66,6 @@ class Payment(BaseModel):
         DateTime(timezone=True),
         onupdate=func.now(),
     )
-    order_id = Column(
-        String,
-        ForeignKey("orders.id"),
-    )
 
     order = relationship(
         "Order",

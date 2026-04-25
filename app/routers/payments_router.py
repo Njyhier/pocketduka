@@ -3,6 +3,7 @@ from app.services.payment_service import get_payment_by_checkout_id, create_paym
 from fastapi import HTTPException, status, Depends
 from app.db.session import get_async_session
 from fastapi import APIRouter
+from app.services.order_service import create_order_with_items
 from app.schemas.payment_schema import PaymentCreate, PaymentRead, Data
 from app.schemas.Baseschema import ApiResponse
 
@@ -22,13 +23,13 @@ async def mpesa_callback(
     data: dict,
     session: AsyncSession = Depends(get_async_session),
 ):
-    print("CALLBACK HIT", data)
+    print("CALLBACK HIT")
     callback = data["Body"]["stkCallback"]
 
     checkout_request_id = callback["CheckoutRequestID"]
     result_code = callback["ResultCode"]
     result_desc = callback["ResultDesc"]
-    print(checkout_request_id)
+    # print(checkout_request_id)
 
     # Find payment by checkout_request_id
     payment = await get_payment_by_checkout_id(checkout_request_id, session)
@@ -38,6 +39,11 @@ async def mpesa_callback(
 
     if result_code == 0:
         payment.status = "successful"
+        order = await create_order_with_items(
+            user_id=payment.user_id,
+            payment_id=payment.id,
+            session=session,
+        )
 
         items = callback.get("CallbackMetadata", {}).get("Item", [])
 
@@ -51,7 +57,10 @@ async def mpesa_callback(
 
     payment.result_code = result_code
     payment.result_desc = result_desc
-    print("PAYMENT Status", payment.status)
     await session.commit()
 
-    return {"message": "Callback processed"}
+    return {
+        "message": "Callback processed",
+        "payment status": payment.status,
+        "order": order,
+    }
