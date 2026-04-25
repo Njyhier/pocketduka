@@ -60,7 +60,7 @@ def stk_push(phone: str, amt: str):
         "PartyA": phone,
         "PartyB": "174379",
         "PhoneNumber": "254712767988",
-        "CallBackURL": "https://pocketduka.onrender.com/callback",
+        "CallBackURL": "https://grant-easter-giddily.ngrok-free.dev/callback",
         "AccountReference": "accountref",
         "TransactionDesc": "txndesc",
     }
