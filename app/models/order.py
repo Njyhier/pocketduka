@@ -32,6 +32,7 @@ class Order(BaseModel):
         nullable=False,
     )
     cart = relationship("Cart", back_populates="orders")
+    payment = relationship("Payment", back_populates="order")
 
     def update_status(self):
         if self.status == "Approved":

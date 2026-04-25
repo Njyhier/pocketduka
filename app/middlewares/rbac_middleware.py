@@ -15,18 +15,18 @@ async def require_role_permission(
     user: User,
     session: AsyncSession,
 ):
-    print("RBAC  hit!")
+    # print("RBAC  hit!")
     user = user
     # print(user)
     user_roles = [role.name for role in user.roles]
-    print("GETTING PERMISSION")
+    # print("GETTING PERMISSION")
     permission: Permission = await get_permission_by_name(
         permission_name=task,
         session=session,
     )
     permission_roles = [role.name for role in permission.roles]
-    print("USER_ROLES", user_roles)
-    print("PERMISSION_ROLES", permission_roles)
+    # print("USER_ROLES", user_roles)
+    # print("PERMISSION_ROLES", permission_roles)
 
     matching_roles = set(user_roles).intersection(permission_roles)
     if not matching_roles:

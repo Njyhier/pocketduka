@@ -12,6 +12,7 @@ from app.models import (
     roles,
     cart,
     cart_item,
+    payment,
 )
 from sqlalchemy import event
 

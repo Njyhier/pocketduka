@@ -12,6 +12,7 @@ from .routers import (
     cart_item_router,
     cart_router,
     order_router,
+    payments_router,
 )
 
 from app.routers.users import users_routes
@@ -50,3 +51,4 @@ app.include_router(address_router.router)
 app.include_router(cart_router.router)
 app.include_router(cart_item_router.router)
 app.include_router(order_router.router)
+app.include_router(payments_router.router)
