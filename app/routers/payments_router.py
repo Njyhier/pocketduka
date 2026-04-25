@@ -10,12 +10,18 @@ from app.schemas.Baseschema import ApiResponse
 router = APIRouter()
 
 
-@router.post("/payments")
+@router.post("/users/{user_id}/payments")
 async def make_payment(
+    user_id: str,
     data: Data,
     session: AsyncSession = Depends(get_async_session),
 ):
-    return await create_payment(payment_data=data, session=session)
+    payment_data = {
+        "user_id": user_id,
+        "phone_number": data.phone_number,
+        "amount": data.amount,
+    }
+    return await create_payment(payment_data=payment_data, session=session)
 
 
 @router.post("/callback")

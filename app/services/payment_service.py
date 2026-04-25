@@ -8,9 +8,9 @@ from sqlalchemy import select
 
 
 async def create_payment(payment_data: dict, session: AsyncSession):
-    user_id = payment_data.user_id
-    phone_number = payment_data.phone_number
-    amount = payment_data.amount
+    user_id = payment_data["user_id"]
+    phone_number = payment_data["phone_number"]
+    amount = payment_data["amount"]
 
     response = stk_push(phone=phone_number, amt=amount)
 

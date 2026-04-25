@@ -26,6 +26,5 @@ class PaymentRead(BaseSchema):
 
 
 class Data(BaseSchema):
-    user_id: str
     phone_number: str
     amount: str
