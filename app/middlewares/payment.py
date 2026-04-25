@@ -50,7 +50,7 @@ def stk_push(phone: str, amt: str):
     print("INITIATING STK PUSH")
     [password, timestamp] = gen_password()
     access_token = get_access_token()
-    url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+    url = "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
     payload = {
         "BusinessShortCode": 174379,
         "Password": password,
@@ -60,7 +60,7 @@ def stk_push(phone: str, amt: str):
         "PartyA": phone,
         "PartyB": "174379",
         "PhoneNumber": phone,
-        "CallBackURL": "https://grant-easter-giddily.ngrok-free.dev/callback",
+        "CallBackURL": "https://pocketduka.onrender.com/callback",
         "AccountReference": "accountref",
         "TransactionDesc": "txndesc",
     }
