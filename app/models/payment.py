@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, Float, Text, ForeignKey
+from sqlalchemy import Column, String, DateTime, Float, Text, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from .Base import BaseModel
 from datetime import datetime, timezone
@@ -48,7 +48,7 @@ class Payment(BaseModel):
     )
 
     result_code = Column(
-        String,
+        Integer,
         nullable=True,
     )
 

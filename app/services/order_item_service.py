@@ -6,6 +6,7 @@ from app.services import cart_service, product_service
 from app.models.cart_item import CartItem
 from app.models.order_item import OrderItem
 from app.schemas.order_item_schema import OrderItemCreate
+import uuid
 
 from app.models.user import User
 from app.models.cart import Cart
@@ -29,7 +30,7 @@ async def create_order_item(
 ) -> OrderItem:
     res = cart_item
     item = OrderItem(
-        id=res.id,
+        id=str(uuid.uuid4()),
         product_id=res.product_id,
         quantity=res.quantity,
         price=res.price,
@@ -37,6 +38,4 @@ async def create_order_item(
         order_id=order_id,
     )
     session.add(item)
-    await session.commit()
-    await session.refresh(item)
     return item

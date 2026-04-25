@@ -59,7 +59,7 @@ def stk_push(phone: str, amt: str):
         "Amount": amt,
         "PartyA": phone,
         "PartyB": "174379",
-        "PhoneNumber": "254712767988",
+        "PhoneNumber": phone,
         "CallBackURL": "https://grant-easter-giddily.ngrok-free.dev/callback",
         "AccountReference": "accountref",
         "TransactionDesc": "txndesc",

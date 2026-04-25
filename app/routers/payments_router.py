@@ -25,6 +25,7 @@ async def mpesa_callback(
 ):
     # print("CALLBACK HIT")
     callback = data["Body"]["stkCallback"]
+    print(callback)
 
     checkout_request_id = callback["CheckoutRequestID"]
     result_code = callback["ResultCode"]
@@ -35,10 +36,15 @@ async def mpesa_callback(
 
     if not payment:
         raise HTTPException(status_code=404, detail="Payment not found")
+    if payment.status == "successful":
+        return {
+            "message": "Callback already processed",
+            "payment status": payment.status,
+        }
 
     if result_code == 0:
         payment.status = "successful"
-        order = await create_order_with_items(
+        await create_order_with_items(
             user_id=payment.user_id,
             payment_id=payment.id,
             session=session,
@@ -56,10 +62,11 @@ async def mpesa_callback(
 
     payment.result_code = result_code
     payment.result_desc = result_desc
+    print("PAYMENT", payment.mpesa_receipt_number)
     await session.commit()
+    await session.refresh(payment)
 
     return {
         "message": "Callback processed",
-        "payment status": payment.status,
-        "order": order,
+        "payment_status": payment.status,
     }
