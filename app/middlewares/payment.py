@@ -1,9 +1,8 @@
-import requests
-from requests.auth import HTTPBasicAuth
-import os
 from dotenv import load_dotenv
-import base64
 from datetime import datetime
+import requests
+import base64
+import os
 
 load_dotenv()
 
@@ -71,5 +70,5 @@ def stk_push(phone: str, amt: str):
     }
 
     response = requests.post(url, json=payload, headers=headers)
-    print("DONE PUSH")
+
     return response.json()

@@ -18,12 +18,12 @@ async def make_payment(
     return await create_payment(payment_data=data, session=session)
 
 
-@router.post("/mpesa/callback")
+@router.post("/callback")
 async def mpesa_callback(
     data: dict,
     session: AsyncSession = Depends(get_async_session),
 ):
-    print("CALLBACK HIT")
+    # print("CALLBACK HIT")
     callback = data["Body"]["stkCallback"]
 
     checkout_request_id = callback["CheckoutRequestID"]
@@ -31,7 +31,6 @@ async def mpesa_callback(
     result_desc = callback["ResultDesc"]
     # print(checkout_request_id)
 
-    # Find payment by checkout_request_id
     payment = await get_payment_by_checkout_id(checkout_request_id, session)
 
     if not payment:
