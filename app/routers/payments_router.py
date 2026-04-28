@@ -1,24 +1,32 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.services.payment_service import get_payment_by_checkout_id, create_payment
+from app.services.payment_service import (
+    get_payment_by_checkout_id,
+    create_payment,
+    simulate_payment,
+)
 from fastapi import HTTPException, status, Depends
 from app.db.session import get_async_session
+from app.services.auth_service import get_current_user
 from fastapi import APIRouter
 from app.services.order_service import create_order_with_items
 from app.schemas.payment_schema import PaymentCreate, PaymentRead, Data
 from app.schemas.Baseschema import ApiResponse
+from app.models.user import User
 
 router = APIRouter()
 
 
 @router.post("/users/{user_id}/payments")
 async def make_payment(
-    user_id: str,
+    phone: str,
     data: Data,
+    user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
+    user_id = user.id
     payment_data = {
+        "phone": phone,
         "user_id": user_id,
-        "phone_number": data.phone_number,
         "amount": data.amount,
     }
     return await create_payment(payment_data=payment_data, session=session)
@@ -29,9 +37,10 @@ async def mpesa_callback(
     data: dict,
     session: AsyncSession = Depends(get_async_session),
 ):
-    # print("CALLBACK HIT")
+    # return await simulate_payment()
+    print("CALLBACK HIT")
     callback = data["Body"]["stkCallback"]
-    print(callback)
+    print("CALLBACK", callback)
 
     checkout_request_id = callback["CheckoutRequestID"]
     result_code = callback["ResultCode"]
@@ -74,5 +83,5 @@ async def mpesa_callback(
 
     return {
         "message": "Callback processed",
-        "payment_status": payment.status,
+        "payload": payment.status,
     }

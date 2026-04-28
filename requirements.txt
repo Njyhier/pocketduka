@@ -17,7 +17,6 @@ charset-normalizer==3.4.6
 click==8.3.1
 cryptography==46.0.5
 distro==1.9.0
-Django==6.0.3
 dnspython==2.8.0
 email-validator==2.3.0
 fastapi==0.135.1
@@ -76,3 +75,4 @@ uvloop==0.22.1
 watchfiles==1.1.1
 websockets==16.0
 yarl==1.23.0
+gunicorn==22.0.0

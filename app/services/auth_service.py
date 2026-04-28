@@ -77,7 +77,15 @@ async def login_for_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     print(access_token)
-    return Token(access_token=access_token, token_type="bearer")
+    token = Token(access_token=access_token, token_type="bearer")
+    return token
+    return {
+        "message": "Login successful",
+        "payload": {
+            "token": token,
+            "user": user,
+        },
+    }
 
 
 async def get_current_user_dep(

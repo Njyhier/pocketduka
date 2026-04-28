@@ -5,23 +5,26 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.middlewares.payment import stk_push
 from app.models.payment import Payment
 from sqlalchemy import select
+import httpx
 
 
 async def create_payment(payment_data: dict, session: AsyncSession):
     user_id = payment_data["user_id"]
-    phone_number = payment_data["phone_number"]
     amount = payment_data["amount"]
+    phone = payment_data["phone"]
 
-    response = stk_push(phone=phone_number, amt=amount)
+    response = await stk_push(amt=amount, phone=phone)
+    print("Response", response)
 
     # Initial request response
-    checkout_request_id = response["CheckoutRequestID"]
-    merchant_request_id = response["MerchantRequestID"]
+    if response:
+        checkout_request_id = response["CheckoutRequestID"]
+        merchant_request_id = response["MerchantRequestID"]
     # print("MERCHANT", merchant_request_id)
 
     payment = Payment(
         status="pending",
-        phone_number=phone_number,
+        phone_number="254708374149",
         checkout_request_id=checkout_request_id,
         merchant_request_id=merchant_request_id,
         user_id=user_id,
@@ -33,7 +36,7 @@ async def create_payment(payment_data: dict, session: AsyncSession):
     await session.commit()
     await session.refresh(payment)
 
-    return {"message": "payment registered"}
+    return {"message": "payment registered", "payload": payment}
 
 
 async def get_payment_by_checkout_id(checkout_request_id: str, session: AsyncSession):
@@ -43,3 +46,10 @@ async def get_payment_by_checkout_id(checkout_request_id: str, session: AsyncSes
     payment = result.scalar_one_or_none()
     print(payment.checkout_request_id)
     return payment
+
+
+async def simulate_payment(data):
+    url = "https://pocketduka.onrender.com/callback"
+    async with httpx.AsyncClient() as client:
+        res = await client.post(url=url, json=data)
+        return res.json()
