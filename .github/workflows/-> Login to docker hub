@@ -1,0 +1,4 @@
+-> Login to docker hub
+-> Create docker image
+-> Tag docker image
+-> Push image to registry
