@@ -1,7 +1,6 @@
 from sqlalchemy import Column, String, DateTime, Float, Text, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from .Base import BaseModel
-from datetime import datetime, timezone
 import uuid
 from sqlalchemy.sql import func
 
