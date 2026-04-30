@@ -37,7 +37,7 @@ async def mpesa_callback(
     data: dict,
     session: AsyncSession = Depends(get_async_session),
 ):
-    # return await simulate_payment()
+    # return await simulate_payment(data)
     print("CALLBACK HIT")
     callback = data["Body"]["stkCallback"]
     print("CALLBACK", callback)

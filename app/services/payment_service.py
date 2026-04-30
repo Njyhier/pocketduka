@@ -1,6 +1,3 @@
-from app.schemas.payment_schema import PaymentCreate
-from fastapi import HTTPException, status
-from app.schemas.order_schema import OrderRead
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.middlewares.payment import stk_push
 from app.models.payment import Payment
@@ -49,7 +46,7 @@ async def get_payment_by_checkout_id(checkout_request_id: str, session: AsyncSes
 
 
 async def simulate_payment(data):
-    url = "https://pocketduka.onrender.com/callback"
+    url = "https://app.mconnect.africa/pocket/callback"
     async with httpx.AsyncClient() as client:
         res = await client.post(url=url, json=data)
         return res.json()
