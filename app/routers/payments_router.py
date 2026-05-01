@@ -4,28 +4,29 @@ from app.services.payment_service import (
     create_payment,
     simulate_payment,
 )
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, Depends
 from app.db.session import get_async_session
 from app.services.auth_service import get_current_user
 from fastapi import APIRouter
 from app.services.order_service import create_order_with_items
-from app.schemas.payment_schema import PaymentCreate, PaymentRead, Data
-from app.schemas.Baseschema import ApiResponse
+from app.schemas.payment_schema import Data
 from app.models.user import User
+from app.utils.phone import PhoneInput
 
 router = APIRouter()
 
 
 @router.post("/users/{user_id}/payments")
 async def make_payment(
-    phone: str,
+    phone_number: str,
     data: Data,
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     user_id = user.id
+    phone_data = PhoneInput(phone=phone_number)
     payment_data = {
-        "phone": phone,
+        "phone": phone_data.phone,
         "user_id": user_id,
         "amount": data.amount,
     }
@@ -38,9 +39,7 @@ async def mpesa_callback(
     session: AsyncSession = Depends(get_async_session),
 ):
     # return await simulate_payment(data)
-    print("CALLBACK HIT")
     callback = data["Body"]["stkCallback"]
-    print("CALLBACK", callback)
 
     checkout_request_id = callback["CheckoutRequestID"]
     result_code = callback["ResultCode"]
@@ -80,6 +79,9 @@ async def mpesa_callback(
     print("PAYMENT", payment.mpesa_receipt_number)
     await session.commit()
     await session.refresh(payment)
+
+    if payment.status == "failed":
+        return {"message": "Payment failed, could not place order"}
 
     return {
         "message": "Callback processed",

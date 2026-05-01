@@ -29,9 +29,9 @@ async def create_order_with_items(user_id: str, payment_id: str, session: AsyncS
         )
         order_items.append(order_item)
     await clear_cart_items(cart_id=cart_id, session=session)
-    print("ORRRDDDERRR", db_order)
 
     return {
+        "message": "Order placed successfuly",
         "order": db_order,
         "order_items": order_items,
     }
