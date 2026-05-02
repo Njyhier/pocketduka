@@ -80,9 +80,6 @@ async def mpesa_callback(
     await session.commit()
     await session.refresh(payment)
 
-    if payment.status == "failed":
-        return {"message": "Payment failed, could not place order"}
-
     return {
         "message": "Callback processed",
         "payload": payment.status,
