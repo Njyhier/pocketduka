@@ -39,7 +39,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: njyhier/pocketduka:latest
-
-    
-
+          tags: |
+            njyhier/pocketduka:latest
+            njyhier/pocketduka:${{ github.sha }}
