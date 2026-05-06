@@ -9,7 +9,7 @@ class PhoneInput(BaseModel):
     @classmethod
     def validate_phone(cls, v):
         phone = re.sub(r"\D", "", v)
-        print(phone)
+        # print(phone)
 
         if phone.startswith("254"):
             phone = phone[3:]
