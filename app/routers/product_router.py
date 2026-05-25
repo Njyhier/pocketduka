@@ -27,7 +27,7 @@ router = APIRouter()
 
 
 @router.post("/products")
-@SystemTasks("create_products")
+# @SystemTasks("create_products")
 async def create_product_route(
     product_create: ProductCreate,
     session: AsyncSession = Depends(get_async_session),

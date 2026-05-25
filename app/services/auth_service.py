@@ -17,6 +17,9 @@ from app.db.session import get_async_session
 from app.schemas.token_schemas import TokenData, Token
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+import logging
+
+logger = logging.getLogger()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 dummy_password = "dummypass"
@@ -76,16 +79,9 @@ async def login_for_access_token(
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    print(access_token)
     token = Token(access_token=access_token, token_type="bearer")
+    logger.info("TOKEN", token)
     return token
-    return {
-        "message": "Login successful",
-        "payload": {
-            "token": token,
-            "user": user,
-        },
-    }
 
 
 async def get_current_user_dep(
