@@ -25,25 +25,3 @@ COPY --from=builder /app /app
 EXPOSE 8002
 
 CMD ["gunicorn","-k","uvicorn.workers.UvicornWorker","app.app:app","--bind","0.0.0.0:8002"]
-
-# COPY --from=builder /install /usr/local
-
-# COPY --from=builder /app /app
-
-
-
-
-# COPY requirements.txt .
-
-
-
-# RUN pip install --no-cache-dir -r requirements.txt --omit=dev
-
-
-
-# COPY --from=builder . .
-
-
-
-# CMD [ "gunicorn","-k","uvicorn.workers.UvicornWorker","app.app:app","--bind", "0.0.0.0:8002" ]
-
