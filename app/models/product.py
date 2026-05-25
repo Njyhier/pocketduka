@@ -38,15 +38,15 @@ class Product(BaseModel):
     images = relationship(
         "ProductImage",
         back_populates="product",
-        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
     inventories = relationship(
         "Inventory",
         back_populates="product",
-        cascade="all, delete-orphan",
         passive_deletes=True,
     )
     cart_items = relationship(
         "CartItem",
         back_populates="product",
+        passive_deletes=True,
     )

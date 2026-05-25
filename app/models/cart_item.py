@@ -17,7 +17,7 @@ class CartItem(BaseModel):
     name = Column(String(60))
     product_id = Column(
         String(60),
-        ForeignKey("products.id"),
+        ForeignKey("products.id", ondelete="CASCADE"),
     )
     product = relationship(
         "Product",
@@ -25,7 +25,7 @@ class CartItem(BaseModel):
     )
     cart_id = Column(
         String(60),
-        ForeignKey("carts.id"),
+        ForeignKey("carts.id", ondelete="CASCADE"),
     )
     cart = relationship(
         "Cart",
