@@ -11,7 +11,7 @@ async def create_payment(payment_data: dict, session: AsyncSession):
     phone = payment_data["phone"]
 
     response = await stk_push(amt=amount, phone=phone)
-    print("Response", response)
+    print("RESPONCE", response)
 
     # Initial request response
     if response:

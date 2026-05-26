@@ -55,4 +55,5 @@ class CartItem(BaseModel):
         self.quantity += 1
 
     def decrement_quantity(self):
-        self.quantity -= 1
+        if self.quantity > 0:
+            self.quantity -= 1
