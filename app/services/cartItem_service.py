@@ -48,10 +48,8 @@ async def create_cart_item(
 
 
 async def delete_cart_item(item_id, session: AsyncSession):
-    item = await get_item_by_id(item_id=item_id, session=session)
-    if item:
-        session.delete(item)
-        await session.commit()
+    await session.execute(delete(CartItem).where(CartItem.id == item_id))
+    await session.commit()
     return {"status": 200, "message": "Item removed from cart"}
 
 
@@ -71,16 +69,17 @@ async def increment_item_quantity(item_id: str, quantity: int, session: AsyncSes
 
 async def decrement_item_quantity(item_id: str, quantity: int, session: AsyncSession):
     item = await get_item_by_id(item_id=item_id, session=session)
-    if item.quantity == 1:
+    if quantity <= 1:
         await delete_cart_item(
             item_id=item_id,
             session=session,
         )
+        return 0
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Item does not exist"
         )
-    if item.quantity > 0:
+    if item.quantity > 1:
         item.set_quantity(quantity=quantity)
     else:
         await delete_cart_item(item_id=item.id, session=session)
