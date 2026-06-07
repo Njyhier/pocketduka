@@ -51,9 +51,5 @@ class CartItem(BaseModel):
     def subtotal(self):
         return self.price * self.quantity
 
-    def increment_quantity(self):
-        self.quantity += 1
-
-    def decrement_quantity(self):
-        if self.quantity > 0:
-            self.quantity -= 1
+    def set_quantity(self, quantity: int):
+        self.quantity = quantity

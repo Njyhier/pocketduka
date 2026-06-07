@@ -58,7 +58,7 @@ async def mpesa_callback(
 
     if result_code == 0:
         payment.status = "successful"
-        await create_order_with_items(
+        order = await create_order_with_items(
             user_id=payment.user_id,
             payment_id=payment.id,
             session=session,
@@ -82,5 +82,4 @@ async def mpesa_callback(
 
     return {
         "message": "Callback processed",
-        "payload": payment.status,
     }

@@ -58,10 +58,10 @@ async def read_cart_orders(
 
 
 @router.get("/orders")
-@SystemTasks("read_all_orders")
+# @SystemTasks("read_all_orders")
 async def get_all_orders_route(
     session: AsyncSession = Depends(get_async_session),
-    _: bool = Depends(require_roles_dep("admin", "owner")),
+    # _: bool = Depends(require_roles_dep("admin", "owner")),
 ):
     payload = await get_all_orders(session=session)
     return {

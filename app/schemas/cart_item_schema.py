@@ -8,5 +8,5 @@ class CartItemRead(BaseSchema):
     quantity: int
     price: float
     category: str
-    subtotal: float
+    subtotal: Optional[float]
     image_url: Optional[str]

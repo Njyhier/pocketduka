@@ -56,7 +56,7 @@ async def stk_push(amt: str, phone: str):
         "PartyA": phone,
         "PartyB": "174379",
         "PhoneNumber": phone,
-        "CallBackURL": "https://app.mconnect.africa/pocket/callback",
+        "CallBackURL": "https://pocketduka.onrender.com",
         "AccountReference": "accountref",
         "TransactionDesc": "txndesc",
     }

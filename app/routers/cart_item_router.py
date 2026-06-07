@@ -16,7 +16,6 @@ from app.services.cartItem_service import (
     read_cart_items,
 )
 
-
 router = APIRouter()
 
 
@@ -62,9 +61,14 @@ async def add_item_to_cart_route(
 @router.patch("/cartitems/increment_quantity/{item_id}")
 async def increment_item_quantity_route(
     item_id: str,
+    quantity: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    payload = await increment_item_quantity(item_id=item_id, session=session)
+    payload = await increment_item_quantity(
+        item_id=item_id,
+        quantity=quantity,
+        session=session,
+    )
     return {
         "status": 200,
         "message": " Increment successful",
@@ -75,9 +79,14 @@ async def increment_item_quantity_route(
 @router.patch("/cartitems/decrement_quantity/{item_id}")
 async def decrement_item_quantity_route(
     item_id: str,
+    quantity: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    payload = await decrement_item_quantity(item_id=item_id, session=session)
+    payload = await decrement_item_quantity(
+        item_id=item_id,
+        quantity=quantity,
+        session=session,
+    )
     return {
         "status": 200,
         "message": "Decrement successful",
