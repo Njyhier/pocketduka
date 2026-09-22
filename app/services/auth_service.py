@@ -21,7 +21,7 @@ import logging
 
 logger = logging.getLogger()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 dummy_password = "dummypass"
 dummy_hash = password_hash.hash(dummy_password)
 

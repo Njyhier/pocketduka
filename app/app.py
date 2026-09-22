@@ -13,6 +13,7 @@ from .routers import (
     cart_router,
     order_router,
     payments_router,
+    auth_router,
 )
 
 from app.routers import user_router
@@ -38,6 +39,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router.router)
 app.include_router(user_router.router)
 app.include_router(product_router.router)
 app.include_router(role_router.router)
