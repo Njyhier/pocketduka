@@ -40,7 +40,7 @@ class SystemTasks:
         self.task = task
 
     def __call__(self, fn: Callable):
-        print("GETING CURRENT USER")
+        # print("GETING CURRENT USER")
         user_dep = get_authorized_user(task_name=self.task)
         # print("USERDEP", user_dep)
         sig = inspect.signature(fn)
