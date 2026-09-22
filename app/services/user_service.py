@@ -124,6 +124,8 @@ from .role_service import get_role_by_name
 from sqlalchemy import func
 from sqlalchemy.orm import selectinload
 
+from app.services.cart_service import create_cart
+
 
 async def create_user(
     session: AsyncSession,
@@ -176,10 +178,21 @@ async def create_user(
     # 4. Save user + relationship
     # --------------------------------------------------
 
+    await session.flush()
+
+    # --------------------------------------------------
+    # 5. Create user's cart
+    # --------------------------------------------------
+
+    await create_cart(
+        user_id=user.id,
+        session=session,
+    )
+
     await session.commit()
 
     # --------------------------------------------------
-    # 5. Reload with roles eagerly loaded
+    # 6. Reload with roles eagerly loaded
     # --------------------------------------------------
 
     result = await session.execute(
