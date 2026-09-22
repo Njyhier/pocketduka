@@ -28,7 +28,7 @@ async def create_permission_route(
 
 
 @router.get("/permissions", response_model=list[PermissionRead])
-@SystemTasks("read_permissions")
+# @SystemTasks("read_permissions")
 async def read_permissions_route(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1),

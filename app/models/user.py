@@ -38,3 +38,7 @@ class User(BaseModel):
         uselist=False,
     )
     payments = relationship("Payment", back_populates="user")
+
+    @property
+    def role_names(self) -> list[str]:
+        return [role.name for role in self.roles]

@@ -9,8 +9,12 @@ user_not_found_exception = HTTPException(
 )
 
 
-async def get_user_by_username(username: str, session: AsyncSession):
+async def get_user_by_username(
+    username: str,
+    session: AsyncSession,
+):
     username = username.strip()
+
     result = await session.execute(
         select(User)
         .where(User.username == username)
@@ -19,9 +23,12 @@ async def get_user_by_username(username: str, session: AsyncSession):
             selectinload(User.cart),
         )
     )
+
     user = result.scalar_one_or_none()
+
     if user is None:
         raise user_not_found_exception
+
     return user
 
 

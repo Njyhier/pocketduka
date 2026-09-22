@@ -22,6 +22,7 @@ class UserReadPrivate(BaseSchema):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     username: str
+    role_names: list[str]
 
 
 class UserReadPublic(BaseSchema):

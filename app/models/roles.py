@@ -22,3 +22,7 @@ class Role(BaseModel):
         "Permission", secondary="role_permissions", back_populates="roles"
     )
     users = relationship("User", secondary="user_roles", back_populates="roles")
+
+    @property
+    def permission_names(self) -> list[str]:
+        return [p.name for p in self.permissions]

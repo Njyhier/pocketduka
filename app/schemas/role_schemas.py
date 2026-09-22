@@ -20,6 +20,7 @@ class RoleUpdate(BaseSchema):
 class RoleRead(BaseSchema):
     id: str
     name: str
+    permission_names: list[str]
 
 
 class UserRoleUpdate(BaseSchema):

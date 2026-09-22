@@ -34,7 +34,6 @@ from app.services.user_service import (
     update_user_roles,
 )
 
-
 router = APIRouter()
 
 
@@ -131,7 +130,7 @@ async def read_user_route(
 
 
 @router.put("/users/{user_id}", response_model=ApiResponse[UserReadPrivate])
-@SystemTasks("update_users")
+# @SystemTasks("update_users")
 async def update_user_route(
     user_data: UserUpdate,
     user_id: str,
@@ -155,7 +154,7 @@ async def delete_user_route(
 
 
 @router.patch("/users/{user_id}/roles")
-@SystemTasks("update_users")
+# @SystemTasks("update_users")
 async def update_user_roles_route(
     user_id: str,
     role_update: UserRoleUpdate,
