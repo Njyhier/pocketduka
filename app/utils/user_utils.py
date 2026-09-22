@@ -24,12 +24,7 @@ async def get_user_by_username(
         )
     )
 
-    user = result.scalar_one_or_none()
-
-    if user is None:
-        raise user_not_found_exception
-
-    return user
+    return result.scalar_one_or_none()
 
 
 async def get_user_by_email(email: str, session: AsyncSession):
@@ -52,7 +47,5 @@ async def get_user_by_user_id(user_id: str, session: AsyncSession):
     )
     user = result.scalar_one_or_none()
     if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="UNAUTHORIZED"
-        )
+        raise user_not_found_exception
     return user

@@ -114,12 +114,13 @@ from sqlalchemy import select, or_
 from fastapi import HTTPException, status
 
 from app.models.user import User
+from app.models.roles import Role
+
 
 from app.utils.password import get_password_hash
-from app.utils.user_utils import get_user_by_user_id
+from app.utils.user_utils import get_user_by_user_id, get_user_by_username
 
 from .role_service import get_role_by_name
-from app.services.cart_service import create_cart
 from sqlalchemy import func
 from sqlalchemy.orm import selectinload
 
@@ -127,43 +128,67 @@ from sqlalchemy.orm import selectinload
 async def create_user(
     session: AsyncSession,
     user_create: UserWrite,
-):
-    result = await session.execute(
-        select(User).where(
-            or_(
-                User.email == user_create.email,
-                User.username == user_create.username,
-            )
-        )
-    )
+) -> User:
 
-    existing_user = result.scalar_one_or_none()
+    # --------------------------------------------------
+    # 1. Check whether username already exists
+    # --------------------------------------------------
+
+    existing_user = await get_user_by_username(
+        username=user_create.username,
+        session=session,
+    )
 
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="User already exists",
+            detail="Username already exists",
         )
 
-    db_user = User(
-        email=user_create.email,
+    # --------------------------------------------------
+    # 2. Get default customer role
+    # --------------------------------------------------
+
+    result = await session.execute(select(Role).where(Role.name == "customer"))
+
+    customer_role = result.scalar_one_or_none()
+
+    if customer_role is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Default customer role does not exist",
+        )
+
+    # --------------------------------------------------
+    # 3. Create user with customer role
+    # --------------------------------------------------
+
+    user = User(
         username=user_create.username,
+        email=user_create.email,
         password_hash=await get_password_hash(user_create.password),
+        roles=[customer_role],
     )
 
-    session.add(db_user)
+    session.add(user)
 
-    await session.flush()
-
-    await create_cart(
-        user_id=db_user.id,
-        session=session,
-    )
+    # --------------------------------------------------
+    # 4. Save user + relationship
+    # --------------------------------------------------
 
     await session.commit()
-    await session.refresh(db_user)
 
-    return db_user
+    # --------------------------------------------------
+    # 5. Reload with roles eagerly loaded
+    # --------------------------------------------------
+
+    result = await session.execute(
+        select(User).options(selectinload(User.roles)).where(User.id == user.id)
+    )
+
+    user = result.scalar_one()
+
+    return user
 
 
 async def read_users(

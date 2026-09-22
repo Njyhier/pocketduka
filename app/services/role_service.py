@@ -26,14 +26,24 @@ async def get_role_by_name(role_name: str, session: AsyncSession) -> Role:
     return role
 
 
-async def create_role(role_data: RoleCreate, session: AsyncSession) -> Role:
-    role_dict = role_data.model_dump()
-    permissions = await read_permissions_by_ids(role_data.permissions, session=session)
-    role_dict["permissions"] = permissions
-    role = Role(**role_dict)
+async def create_role(
+    role_create: RoleCreate,
+    session: AsyncSession,
+):
+    role = Role(
+        name=role_create.name,
+    )
+
     session.add(role)
+
     await session.commit()
-    await session.refresh(role)
+
+    result = await session.execute(
+        select(Role).options(selectinload(Role.permissions)).where(Role.id == role.id)
+    )
+
+    role = result.scalar_one()
+
     return role
 
 

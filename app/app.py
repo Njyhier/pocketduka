@@ -15,8 +15,6 @@ from .routers import (
     payments_router,
     auth_router,
 )
-
-from app.routers import user_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
@@ -52,3 +50,9 @@ app.include_router(cart_router.router)
 app.include_router(cart_item_router.router)
 app.include_router(order_router.router)
 app.include_router(payments_router.router)
+
+for route in app.routes:
+    print(
+        getattr(route, "methods", None),
+        getattr(route, "path", None),
+    )

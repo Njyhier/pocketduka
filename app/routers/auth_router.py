@@ -7,7 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_async_session
 from app.models.user import User
 from app.schemas.token_schemas import Token
-from app.schemas.user_schemas import UserReadPrivate
+from app.schemas.user_schemas import UserReadPrivate, UserWrite
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.services.user_service import create_user
 
 from app.services.auth_service import (
     login_for_access_token,
@@ -19,6 +22,21 @@ router = APIRouter(
     prefix="/auth",
     tags=["Authentication"],
 )
+
+
+@router.post(
+    "/signup",
+    response_model=UserReadPrivate,
+    status_code=status.HTTP_201_CREATED,
+)
+async def signup(
+    user_data: UserWrite,
+    session: AsyncSession = Depends(get_async_session),
+) -> UserReadPrivate:
+    return await create_user(
+        session=session,
+        user_create=user_data,
+    )
 
 
 # ============================================================
