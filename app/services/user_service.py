@@ -120,6 +120,8 @@ from app.utils.user_utils import get_user_by_user_id
 
 from .role_service import get_role_by_name
 from app.services.cart_service import create_cart
+from sqlalchemy import func
+from sqlalchemy.orm import selectinload
 
 
 async def create_user(
@@ -182,10 +184,16 @@ async def read_users(
             detail="Page size must be between 1 and 100",
         )
 
+    # -----------------------------------
     # Base query
-    query = select(User)
+    # -----------------------------------
 
+    query = select(User).options(selectinload(User.roles))
+
+    # -----------------------------------
     # Search
+    # -----------------------------------
+
     if search:
         search_pattern = f"%{search}%"
 
@@ -196,7 +204,10 @@ async def read_users(
             )
         )
 
+    # -----------------------------------
     # Count
+    # -----------------------------------
+
     count_query = select(func.count(User.id))
 
     if search:
@@ -211,7 +222,10 @@ async def read_users(
 
     total = count_result.scalar_one()
 
+    # -----------------------------------
     # Pagination
+    # -----------------------------------
+
     offset = (page - 1) * page_size
 
     query = query.offset(offset).limit(page_size)
@@ -219,6 +233,10 @@ async def read_users(
     result = await session.execute(query)
 
     users = result.scalars().all()
+
+    # -----------------------------------
+    # Pagination metadata
+    # -----------------------------------
 
     total_pages = (total + page_size - 1) // page_size if total > 0 else 0
 
