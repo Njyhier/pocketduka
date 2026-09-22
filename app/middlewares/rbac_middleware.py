@@ -31,7 +31,7 @@ async def require_role_permission(
     matching_roles = set(user_roles).intersection(permission_roles)
     if not matching_roles:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="FORBIDDEN")
-    print("Access granted!")
+    # print("Access granted!")
     return user
 
 

@@ -35,7 +35,6 @@ from app.services.user_service import (
     update_user_roles,
 )
 
-
 router = APIRouter()
 
 
