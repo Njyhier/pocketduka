@@ -88,7 +88,7 @@ async def delete_role(role_name: str, session: AsyncSession) -> ApiResponse:
     role_to_delete = await get_role_by_name(role_name, session)
     await session.delete(role_to_delete)
     await session.commit()
-    return {"message": "Role dleted successfuly"}
+    return {"status": True, "payload": {"message": "Role deleted successfully"}}
 
 
 # async def read_roles_by_names(*role_names: str, session: AsyncSession) -> list[Role]:
