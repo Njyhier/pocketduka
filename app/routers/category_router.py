@@ -35,6 +35,7 @@ async def get_categories(
     return {
         "message": "Categories retrieved successfully",
         "payload": categories,
+        "status": 200,
     }
 
 

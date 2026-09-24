@@ -29,7 +29,7 @@ async def get_category_by_id(
 
 async def read_categories(session):
     result = await session.execute(select(Category))
-    categories = result.scalars()
+    categories = result.scalars().all()
     return categories
 
 
