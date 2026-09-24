@@ -180,6 +180,18 @@ async def update_product(
     return product
 
 
+from decimal import Decimal
+
+from sqlalchemy import select, or_, asc, desc, func
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from app.models.product import Product
+from app.models.inventory import Inventory
+from app.schemas.product_schemas import ProductRead
+from app.schemas.Baseschema import PaginatedResponse
+
+
 async def read_products(
     session: AsyncSession,
     skip: int = 0,
@@ -191,7 +203,7 @@ async def read_products(
     in_stock: bool | None = None,
     sort_by: str = "created_at",
     sort_order: str = "desc",
-) -> list[ProductRead]:
+) -> PaginatedResponse[list[ProductRead]]:
 
     # -----------------------------------------
     # Pagination
@@ -234,6 +246,24 @@ async def read_products(
         filters.append(Product.inventories.any(Inventory.quantity > 0))
 
     # -----------------------------------------
+    # Count total matching products
+    # -----------------------------------------
+
+    count_query = select(func.count(Product.id)).where(*filters)
+
+    count_result = await session.execute(count_query)
+
+    total = count_result.scalar_one()
+
+    # -----------------------------------------
+    # Calculate pagination information
+    # -----------------------------------------
+
+    page = (skip // limit) + 1
+
+    total_pages = (total + limit - 1) // limit
+
+    # -----------------------------------------
     # Base query
     # -----------------------------------------
 
@@ -274,14 +304,25 @@ async def read_products(
     query = query.offset(skip).limit(limit)
 
     # -----------------------------------------
-    # Execute
+    # Execute product query
     # -----------------------------------------
 
     result = await session.execute(query)
 
     products = result.scalars().unique().all()
 
-    return products
+    # -----------------------------------------
+    # Return paginated response
+    # -----------------------------------------
+
+    return PaginatedResponse(
+        items=products,
+        total=total,
+        skip=skip,
+        limit=limit,
+        page=page,
+        total_pages=total_pages,
+    )
 
 
 async def read_product(

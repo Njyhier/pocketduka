@@ -96,7 +96,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_async_session
 from app.middlewares.rbac_middleware import SystemTasks
-from app.schemas.Baseschema import ApiResponse
+from app.schemas.Baseschema import PaginatedResponse, ApiResponse
 from app.schemas.product_schemas import (
     ProductCreate,
     ProductRead,
@@ -133,7 +133,7 @@ async def create_product_route(
 
 @router.get(
     "/products",
-    response_model=ApiResponse[list[ProductRead]],
+    response_model=PaginatedResponse[ProductRead],
 )
 async def read_products_route(
     session: AsyncSession = Depends(get_async_session),
@@ -198,11 +198,7 @@ async def read_products_route(
         sort_order=sort_order,
     )
 
-    return {
-        "status": 200,
-        "message": "Products retrieved successfully",
-        "payload": products,
-    }
+    return products
 
 
 @router.get(

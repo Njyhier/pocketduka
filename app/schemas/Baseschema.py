@@ -15,12 +15,10 @@ class ApiResponse(BaseSchema, Generic[T]):
     payload: Optional[T]
 
 
-T = TypeVar("T")
-
-
 class PaginatedResponse(BaseModel, Generic[T]):
     items: list[T]
-    page: int
-    page_size: int
     total: int
+    skip: int
+    limit: int
+    page: int
     total_pages: int
